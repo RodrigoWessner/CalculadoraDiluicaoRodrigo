@@ -35,31 +35,33 @@ public class MedicamentoController {
 	public MedicamentoController(MedicamentoService medicamentoService) {
 		this.medicamentoService = medicamentoService;
 	}
-	
+
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	@ApiOperation(value = "Listar Medicamentos")
-	public Iterable<Medicamento> lista(){
-		return(medicamentoService.lista());
+	public Iterable<Medicamento> lista() {
+		return (medicamentoService.lista());
 	}
-	
+
 	@ApiOperation(value = "Criar Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
-	public ResponseEntity<MedicamentoDto> criar(@RequestBody @Valid MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder, BindingResult result){
+	public ResponseEntity<MedicamentoDto> criar(@RequestBody @Valid MedicamentoForm medicamentoForm,
+			UriComponentsBuilder uriBuilder, BindingResult result) {
 		return medicamentoService.criar(medicamentoForm, uriBuilder, result);
 	}
-	
+
 	@ApiOperation(value = "Deletar Medicamento")
 	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
 	@Transactional
-	public ResponseEntity<MedicamentoDto> deletar(@PathVariable BigInteger id){
+	public ResponseEntity<MedicamentoDto> deletar(@PathVariable BigInteger id) {
 		return medicamentoService.remover(id);
 	}
-	
+
 	@ApiOperation(value = "Atualizar Medicamento")
 	@RequestMapping(value = "/atulizar/{id}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id,  @Valid MedicamentoForm medicamentoForm, BindingResult result){
-		return(medicamentoService.atualizar(id,medicamentoForm, result));
+	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm,
+			BindingResult result) {
+		return (medicamentoService.atualizar(id, medicamentoForm, result));
 	}
 
 }

@@ -24,11 +24,11 @@ public class Medicamento {
 	@Column(nullable = false)
 	private String nome;
 	
-	@ManyToOne
+	@ManyToOne(optional = false)
 	//@JoinColumn(name = "id_grupo_medicamento")
 	private GrupoMedicamento grupoMedicamento;
 	
-	@ManyToOne
+	@ManyToOne(optional = false)
 	//@JoinColumn(name = "id_laboratorio")
 	private Laboratorio laboratorio;
 	

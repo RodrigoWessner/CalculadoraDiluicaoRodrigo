@@ -14,24 +14,22 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import br.com.Calculadora.Dto.MedicamentoDto;
+import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
+import br.com.Calculadora.Repository.LaboratorioRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
 import br.com.Calculadora.orm.GrupoMedicamento;
 import br.com.Calculadora.orm.Laboratorio;
 import br.com.Calculadora.orm.Medicamento;
 
 public class MedicamentoForm {
-	@NotBlank
-	@NotNull
-	@NotEmpty
+	@NotBlank(message = "Nome não pode ser nulo nem vazio")
 	private String nome;
 
-	@ManyToOne
-	@JoinColumn(name = "id")
-	private GrupoMedicamento grupoMedicamento;
+	@NotBlank(message = "grupo não pode ser nulo nem vazio")
+	private String nomeGrupoMedicamento;
 
-	@ManyToOne
-	@JoinColumn(name = "id")
-	private Laboratorio laboratorio;
+	@NotBlank(message = "Laboratorio não pode ser nulo nem vazio")
+	private String nomeLaboratorio;
 
 	private BigDecimal quantidadeApresentacao;
 	private BigDecimal concentracaoInicial;
@@ -41,12 +39,12 @@ public class MedicamentoForm {
 	private String unidadeMedida;
 	private String embalagemApresentada;
 
-	public MedicamentoForm(String nome, GrupoMedicamento grupoMedicamento, Laboratorio laboratorio,
+	public MedicamentoForm(String nome, String nomeGrupoMedicamento, String nomeLaboratorio,
 			BigDecimal quantidadeApresentacao, BigDecimal concentracaoInicial, String infoSobra, String infoObservacao,
 			String infoTempoAdministracao, String unidadeMedida, String embalagemApresentada) {
 		this.nome = nome;
-		this.grupoMedicamento = grupoMedicamento;
-		this.laboratorio = laboratorio;
+		this.nomeGrupoMedicamento = nomeGrupoMedicamento;
+		this.nomeLaboratorio = nomeLaboratorio;
 		this.quantidadeApresentacao = quantidadeApresentacao;
 		this.concentracaoInicial = concentracaoInicial;
 		this.infoSobra = infoSobra;
@@ -56,14 +54,21 @@ public class MedicamentoForm {
 		this.embalagemApresentada = embalagemApresentada;
 	}
 
-	public Medicamento converter() {
+	public Medicamento converter(LaboratorioRepository laboratorioRepository,
+			GrupoMedicamentoRepository grupoMedicamentoRepository) {
+		Laboratorio laboratorio = laboratorioRepository.findByNome(nomeLaboratorio);
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nomeGrupoMedicamento);
+
 		return (new Medicamento(nome, grupoMedicamento, laboratorio, quantidadeApresentacao, concentracaoInicial,
 				infoSobra, infoObservacao, infoTempoAdministracao, unidadeMedida, embalagemApresentada));
-
 	}
 
-	public Medicamento atualizar(BigInteger id, MedicamentoRepository medicamentoRepository) {
+	public Medicamento atualizar(BigInteger id, MedicamentoRepository medicamentoRepository,
+			LaboratorioRepository laboratorioRepository, GrupoMedicamentoRepository grupoMedicamentoRepository) {
 		Medicamento medicamento = medicamentoRepository.getOne(id);
+		Laboratorio laboratorio = laboratorioRepository.findByNome(nomeLaboratorio);
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nomeGrupoMedicamento);
+
 		medicamento.setNome(nome);
 		medicamento.setGrupoMedicamento(grupoMedicamento);
 		medicamento.setLaboratorio(laboratorio);
@@ -85,20 +90,20 @@ public class MedicamentoForm {
 		this.nome = nome;
 	}
 
-	public GrupoMedicamento getGrupoMedicamento() {
-		return grupoMedicamento;
+	public String getGrupoMedicamento() {
+		return nomeGrupoMedicamento;
 	}
 
-	public void setGrupoMedicamento(GrupoMedicamento grupoMedicamento) {
-		this.grupoMedicamento = grupoMedicamento;
+	public void setGrupoMedicamento(String nomeGrupoMedicamento) {
+		this.nomeGrupoMedicamento = nomeGrupoMedicamento;
 	}
 
-	public Laboratorio getLaboratorio() {
-		return laboratorio;
+	public String getNomeLaboratorio() {
+		return nomeLaboratorio;
 	}
 
-	public void setLaboratorio(Laboratorio laboratorio) {
-		this.laboratorio = laboratorio;
+	public void setNomeLaboratorio(String nomeLaboratorio) {
+		this.nomeLaboratorio = nomeLaboratorio;
 	}
 
 	public BigDecimal getQuantidadeApresentacao() {

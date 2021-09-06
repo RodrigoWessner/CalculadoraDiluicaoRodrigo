@@ -10,4 +10,7 @@ import br.com.Calculadora.orm.Laboratorio;
 @Repository
 public interface LaboratorioRepository extends JpaRepository<Laboratorio, BigInteger>{
 
+	Laboratorio findByNome(String nomeLaboratorio);
+
+	
 }

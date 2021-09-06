@@ -11,4 +11,6 @@ import br.com.Calculadora.orm.GrupoMedicamento;
 @Repository
 public interface GrupoMedicamentoRepository extends JpaRepository<GrupoMedicamento, BigInteger>{
 
+	GrupoMedicamento findByNome(String nomeGrupoMedicamento);
+
 }
