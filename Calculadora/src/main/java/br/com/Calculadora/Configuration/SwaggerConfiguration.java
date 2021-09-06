@@ -33,12 +33,12 @@ public class SwaggerConfiguration {
     private ApiInfo metaInfo() {
 
         ApiInfo apiInfo = new ApiInfo(
-                "Eventos API REST",
-                "API REST de cadastro de eventos",
+                "API REST",
+                "API REST Calculadora de medicamentos",
                 "1.0",
                 "Terms of Service",
-                new Contact("Michelli Brito", "https://www.youtube.com/channel/UC2WbG8UgpPaLcFSNJYwtPow?view_as=subscriber",
-                        "michellidibrito@gmail.com"),
+                new Contact("Rodrigo Nunes Wessner", "",
+                        "rodrigowessner1@gmail.com"),
                 "Apache License Version 2.0",
                 "https://www.apache.org/licesen.html", new ArrayList<VendorExtension>()
         );

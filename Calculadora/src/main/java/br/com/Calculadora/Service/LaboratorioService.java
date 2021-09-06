@@ -33,27 +33,35 @@ public class LaboratorioService {
 		return laboratorio;
 	}
 
-	public ResponseEntity<LaboatorioDto> criar( LaboratorioForm laboratorioForm, BindingResult result,
+	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, BindingResult result,
 			UriComponentsBuilder uriBuilder) {
-		/*if (result.hasErrors()) {
+		if (result.hasErrors()) {
 			throw new RuntimeException();
-		} else {*/
+		} else {
 			Laboratorio laboratorio = laboratorioForm.converter();
 			laboratorioRepository.save(laboratorio);
 
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(laboratorio.getId()).toUri();
 			return ResponseEntity.created(uri).body(new LaboatorioDto(laboratorio));
-		
+		}
 	}
 
-	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm) {
-		Laboratorio laboratorio = laboratorioForm.atualizar(id, laboratorioRepository);
-		return ResponseEntity.ok(new LaboatorioDto(laboratorio));
-
+	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm,
+			BindingResult result) {
+		if (result.hasErrors() || !laboratorioRepository.existsById(id)) {
+			throw new RuntimeException();
+		} else {
+			Laboratorio laboratorio = laboratorioForm.atualizar(id, laboratorioRepository);
+			return ResponseEntity.ok(new LaboatorioDto(laboratorio));
+		}
 	}
 
 	public ResponseEntity<LaboatorioDto> remover(BigInteger id) {
-		laboratorioRepository.deleteById(id);
-		return (ResponseEntity.ok().build());
+		if (!laboratorioRepository.existsById(id)) {
+			throw new RuntimeException();
+		} else {
+			laboratorioRepository.deleteById(id);
+			return (ResponseEntity.ok().build());
+		}
 	}
 }

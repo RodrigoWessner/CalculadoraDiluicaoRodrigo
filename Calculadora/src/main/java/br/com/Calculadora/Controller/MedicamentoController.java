@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +44,8 @@ public class MedicamentoController {
 	
 	@ApiOperation(value = "Criar Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
-	public ResponseEntity<MedicamentoDto> criar(@RequestBody MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder){
-		return medicamentoService.criar(medicamentoForm, uriBuilder);
+	public ResponseEntity<MedicamentoDto> criar(@RequestBody @Valid MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder, BindingResult result){
+		return medicamentoService.criar(medicamentoForm, uriBuilder, result);
 	}
 	
 	@ApiOperation(value = "Deletar Medicamento")
@@ -57,8 +58,8 @@ public class MedicamentoController {
 	@ApiOperation(value = "Atualizar Medicamento")
 	@RequestMapping(value = "/atulizar/{id}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm){
-		return(medicamentoService.atualizar(id, medicamentoForm));
+	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id,  @Valid MedicamentoForm medicamentoForm, BindingResult result){
+		return(medicamentoService.atualizar(id,medicamentoForm, result));
 	}
 
 }

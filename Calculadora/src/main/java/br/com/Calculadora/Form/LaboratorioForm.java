@@ -10,9 +10,8 @@ import br.com.Calculadora.orm.Laboratorio;
 
 public class LaboratorioForm {
 	@NotBlank(message = "Nome noão pode ser nulo nem vazio!")
-	
 	private String nome;
-
+	
 	public String getNome() {
 		return nome;
 	}

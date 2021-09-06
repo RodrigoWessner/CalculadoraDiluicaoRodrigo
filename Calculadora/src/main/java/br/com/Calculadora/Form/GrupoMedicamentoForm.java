@@ -11,8 +11,7 @@ import br.com.Calculadora.orm.GrupoMedicamento;
 
 public class GrupoMedicamentoForm {
 
-    @NotEmpty(message = "Nome não pode ser nulo nem vazio!")	
-    @NotNull(message = "Nome não pode ser nullo")
+    @NotBlank(message = "Nome não pode ser nulo nem vazio!")	
     private String nome;
 	
     public String getNome() {
