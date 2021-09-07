@@ -1,6 +1,7 @@
 package br.com.Calculadora.Controller;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -37,8 +38,8 @@ public class LaboratorioController {
 	
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/lista", method = RequestMethod.GET)
-	public Iterable<Laboratorio> lista(){
-		return laboratorioService.lista();
+	public ResponseEntity<List<LaboatorioDto>> lista(){
+		return(laboratorioService.lista());
 	}
 	
 	@ApiOperation(value = "Insere nome Laboratorio")

@@ -1,6 +1,7 @@
 package br.com.Calculadora.Controller;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -38,7 +39,7 @@ public class MedicamentoController {
 
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	@ApiOperation(value = "Listar Medicamentos")
-	public Iterable<Medicamento> lista() {
+	public ResponseEntity<List<MedicamentoDto>> lista() {
 		return (medicamentoService.lista());
 	}
 

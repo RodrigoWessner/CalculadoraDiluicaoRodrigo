@@ -2,7 +2,9 @@ package br.com.Calculadora.Service;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,9 +15,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
+import br.com.Calculadora.Dto.LaboatorioDto;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.orm.GrupoMedicamento;
+import br.com.Calculadora.orm.Laboratorio;
 
 @Service
 public class GrupoMedicamentoService {
@@ -28,9 +32,15 @@ public class GrupoMedicamentoService {
 	}
 
 	// Metodos
-	public Iterable<GrupoMedicamento> lista() {
-		Iterable<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findAll();
-		return grupoMedicamento;
+	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
+		List<GrupoMedicamento> grupoMedicamento= grupoMedicamentoRepository.findAll();
+		List<GrupoMedicamentoDto> grupoMedicamentoList = new ArrayList<GrupoMedicamentoDto>();
+		
+		grupoMedicamento.forEach(grupo ->{
+			grupoMedicamentoList.add(new GrupoMedicamentoDto(grupo));
+		});
+
+		return ResponseEntity.ok(grupoMedicamentoList);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> criar(@Valid GrupoMedicamentoForm grupoMedicamentoForm,
@@ -58,7 +68,13 @@ public class GrupoMedicamentoService {
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> remover(BigInteger id) {
-		grupoMedicamentoRepository.deleteById(id);
-		return ResponseEntity.ok().build();
+		if (!grupoMedicamentoRepository.existsById(id)) {
+			throw new RuntimeException();
+		} else {
+			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
+			GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
+			grupoMedicamentoRepository.deleteById(id);
+			return (ResponseEntity.ok(grupoMedicamentoDto));
+		}
 	}
 }

@@ -2,6 +2,7 @@ package br.com.Calculadora.Form;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -25,11 +26,11 @@ public class MedicamentoForm {
 	@NotBlank(message = "Nome não pode ser nulo nem vazio")
 	private String nome;
 
-	@NotBlank(message = "grupo não pode ser nulo nem vazio")
-	private String nomeGrupoMedicamento;
+	@NotNull
+	private BigInteger idGrupoMedicamento;
 
-	@NotBlank(message = "Laboratorio não pode ser nulo nem vazio")
-	private String nomeLaboratorio;
+	@NotNull
+	private BigInteger idLaboratorio;
 
 	private BigDecimal quantidadeApresentacao;
 	private BigDecimal concentracaoInicial;
@@ -39,12 +40,12 @@ public class MedicamentoForm {
 	private String unidadeMedida;
 	private String embalagemApresentada;
 
-	public MedicamentoForm(String nome, String nomeGrupoMedicamento, String nomeLaboratorio,
+	public MedicamentoForm(String nome, BigInteger idGrupoMedicamento, BigInteger idLaboratorio,
 			BigDecimal quantidadeApresentacao, BigDecimal concentracaoInicial, String infoSobra, String infoObservacao,
 			String infoTempoAdministracao, String unidadeMedida, String embalagemApresentada) {
 		this.nome = nome;
-		this.nomeGrupoMedicamento = nomeGrupoMedicamento;
-		this.nomeLaboratorio = nomeLaboratorio;
+		this.idGrupoMedicamento = idGrupoMedicamento;
+		this.idLaboratorio = idLaboratorio;
 		this.quantidadeApresentacao = quantidadeApresentacao;
 		this.concentracaoInicial = concentracaoInicial;
 		this.infoSobra = infoSobra;
@@ -56,22 +57,23 @@ public class MedicamentoForm {
 
 	public Medicamento converter(LaboratorioRepository laboratorioRepository,
 			GrupoMedicamentoRepository grupoMedicamentoRepository) {
-		Laboratorio laboratorio = laboratorioRepository.findByNome(nomeLaboratorio);
-		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nomeGrupoMedicamento);
+		
+		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(idLaboratorio);
+		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(idGrupoMedicamento);
 
-		return (new Medicamento(nome, grupoMedicamento, laboratorio, quantidadeApresentacao, concentracaoInicial,
+		return (new Medicamento(nome, grupoMedicamento.get(), laboratorio.get(), quantidadeApresentacao, concentracaoInicial,
 				infoSobra, infoObservacao, infoTempoAdministracao, unidadeMedida, embalagemApresentada));
 	}
 
 	public Medicamento atualizar(BigInteger id, MedicamentoRepository medicamentoRepository,
 			LaboratorioRepository laboratorioRepository, GrupoMedicamentoRepository grupoMedicamentoRepository) {
 		Medicamento medicamento = medicamentoRepository.getOne(id);
-		Laboratorio laboratorio = laboratorioRepository.findByNome(nomeLaboratorio);
-		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nomeGrupoMedicamento);
+		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(idLaboratorio);
+		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(idGrupoMedicamento);
 
 		medicamento.setNome(nome);
-		medicamento.setGrupoMedicamento(grupoMedicamento);
-		medicamento.setLaboratorio(laboratorio);
+		medicamento.setGrupoMedicamento(grupoMedicamento.get());
+		medicamento.setLaboratorio(laboratorio.get());
 		medicamento.setQuantidadeApresentacao(quantidadeApresentacao);
 		medicamento.setConcentracaoInicial(concentracaoInicial);
 		medicamento.setInfoSobra(infoSobra);
@@ -90,20 +92,20 @@ public class MedicamentoForm {
 		this.nome = nome;
 	}
 
-	public String getGrupoMedicamento() {
-		return nomeGrupoMedicamento;
+	public BigInteger getIdGrupoMedicamento() {
+		return idGrupoMedicamento;
 	}
 
-	public void setGrupoMedicamento(String nomeGrupoMedicamento) {
-		this.nomeGrupoMedicamento = nomeGrupoMedicamento;
+	public void setIdGrupoMedicamento(BigInteger idGrupoMedicamento) {
+		this.idGrupoMedicamento = idGrupoMedicamento;
 	}
 
-	public String getNomeLaboratorio() {
-		return nomeLaboratorio;
+	public BigInteger getIdLaboratorio() {
+		return idLaboratorio;
 	}
 
-	public void setNomeLaboratorio(String nomeLaboratorio) {
-		this.nomeLaboratorio = nomeLaboratorio;
+	public void setIdLaboratorio(BigInteger idLaboratorio) {
+		this.idLaboratorio = idLaboratorio;
 	}
 
 	public BigDecimal getQuantidadeApresentacao() {

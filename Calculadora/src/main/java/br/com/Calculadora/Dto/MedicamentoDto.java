@@ -21,6 +21,7 @@ public class MedicamentoDto {
 	private String embalagemApresentada;
 
 	public MedicamentoDto(Medicamento medicamento) {
+		this.id = medicamento.getId();
 		this.nome = medicamento.getNome();
 		this.grupoMedicamento = medicamento.getGrupoMedicamento();
 		this.laboratorio = medicamento.getLaboratorio();

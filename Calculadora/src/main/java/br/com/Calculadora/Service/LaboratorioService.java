@@ -2,6 +2,9 @@ package br.com.Calculadora.Service;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -28,16 +31,22 @@ public class LaboratorioService {
 	}
 
 	// metodos
-	public Iterable<Laboratorio> lista() {
-		Iterable<Laboratorio> laboratorio = laboratorioRepository.findAll();
-		return laboratorio;
+	public ResponseEntity<List<LaboatorioDto>> lista() {
+		List<Laboratorio> laboratorio = laboratorioRepository.findAll();
+		List<LaboatorioDto> laboratorioDtoList = new ArrayList<LaboatorioDto>();
+		
+		laboratorio.forEach(lab ->{
+			laboratorioDtoList.add(new LaboatorioDto(lab));
+		});
+
+		return ResponseEntity.ok(laboratorioDtoList);
 	}
 
 	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, BindingResult result,
 			UriComponentsBuilder uriBuilder) {
 		if (result.hasErrors()) {
 			throw new RuntimeException();
-		} else {
+		} else {			
 			Laboratorio laboratorio = laboratorioForm.converter();
 			laboratorioRepository.save(laboratorio);
 
@@ -60,8 +69,10 @@ public class LaboratorioService {
 		if (!laboratorioRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
+			Optional<Laboratorio> laboratorio = laboratorioRepository.findById(id);
+			LaboatorioDto laboratorioDto = new LaboatorioDto(laboratorio.get());
 			laboratorioRepository.deleteById(id);
-			return (ResponseEntity.ok().build());
+			return (ResponseEntity.ok(laboratorioDto));
 		}
 	}
 }

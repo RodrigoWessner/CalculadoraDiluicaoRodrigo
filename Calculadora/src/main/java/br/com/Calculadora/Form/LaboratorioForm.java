@@ -9,7 +9,7 @@ import br.com.Calculadora.Repository.LaboratorioRepository;
 import br.com.Calculadora.orm.Laboratorio;
 
 public class LaboratorioForm {
-	@NotBlank(message = "Nome noão pode ser nulo nem vazio!")
+	@NotBlank(message = "Nome não pode ser nulo nem vazio!")
 	private String nome;
 	
 	public String getNome() {
@@ -25,7 +25,7 @@ public class LaboratorioForm {
 	}
 	
 	public Laboratorio atualizar(BigInteger id, LaboratorioRepository laboratorioRepository) {
-		Laboratorio laboratorio = laboratorioRepository.getOne(id);
+		Laboratorio laboratorio = laboratorioRepository.getOne(id); //option
 		laboratorio.setNome(nome);
 		return laboratorio;
 	}

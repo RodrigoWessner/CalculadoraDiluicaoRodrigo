@@ -41,15 +41,7 @@ public class GrupoMedicamentoController {
 
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public Iterable<GrupoMedicamento> lista() {
-		// CrudPersistence
-		/*
-		 * List<GrupoMedicamento> grupoMedicamento =
-		 * grupoMedicamentoRepository.findAll(); return
-		 * GrupoMedicamentoDto.converter(grupoMedicamento);
-		 */
-		// Iterable<GrupoMedicamento> grupoMedicamento =
-		// grupoMedicamentoRepository.findAll();
+	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
 		return grupoMedicamentoService.lista();
 
 	}
@@ -58,15 +50,6 @@ public class GrupoMedicamentoController {
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
 	public ResponseEntity<GrupoMedicamentoDto> criar(@RequestBody @Valid GrupoMedicamentoForm grupoMedicamentoForm,
 			UriComponentsBuilder uriBuilder, BindingResult result) {// pega info do corpo
-		/*
-		 * GrupoMedicamento grupoMedicamento = grupoMedicamentoForm.converter();
-		 * grupoMedicamentoRepository.save(grupoMedicamento);
-		 * 
-		 * //boas praticas, retorno 201 URI uri =
-		 * uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri
-		 * (); return ResponseEntity.created(uri).body(new
-		 * GrupoMedicamentoDto(grupoMedicamento));
-		 */
 		return grupoMedicamentoService.criar(grupoMedicamentoForm, uriBuilder, result);
 	}
 
@@ -75,11 +58,6 @@ public class GrupoMedicamentoController {
 	@Transactional
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(@PathVariable BigInteger id,
 			@Valid GrupoMedicamentoForm grupoMedicamentoForm, BindingResult result) {
-		/*
-		 * GrupoMedicamento grupoMedicamento = grupoMedicamentoForm.atualizar(id,
-		 * grupoMedicamentoRepository); return ResponseEntity.ok(new
-		 * GrupoMedicamentoDto(grupoMedicamento));
-		 */
 		return (grupoMedicamentoService.atualizar(id, grupoMedicamentoForm, result));
 	}
 
@@ -90,10 +68,6 @@ public class GrupoMedicamentoController {
 		if (!grupoMedicamentoRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			/*
-			 * grupoMedicamentoRepository.deleteById(id); return
-			 * ResponseEntity.ok().build();
-			 */
 			return (grupoMedicamentoService.remover(id));
 		}
 	}
