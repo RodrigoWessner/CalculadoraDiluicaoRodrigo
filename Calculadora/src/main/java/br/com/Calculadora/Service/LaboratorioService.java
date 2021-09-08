@@ -6,15 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.Calculadora.Dto.GrupoMedicamentoDto;
 import br.com.Calculadora.Dto.LaboatorioDto;
 import br.com.Calculadora.Form.LaboratorioForm;
 import br.com.Calculadora.Repository.LaboratorioRepository;
@@ -43,24 +40,28 @@ public class LaboratorioService {
 	}
 
 	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder) {
-		try{
+		try {
 			Laboratorio laboratorio = new Laboratorio(laboratorioForm.getNome());
 			laboratorioRepository.save(laboratorio);
 
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(laboratorio.getId()).toUri();
 			return ResponseEntity.created(uri).body(new LaboatorioDto(laboratorio));
-		}catch (RuntimeException exception) {
+		} catch (RuntimeException exception) {
 			throw exception;
 		}
 	}
 
-	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm,
-			BindingResult result) {
-		if (result.hasErrors() || !laboratorioRepository.existsById(id)) {
+	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm) {
+		if (!laboratorioRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			Laboratorio laboratorio = laboratorioForm.atualizar(id, laboratorioRepository);
-			return ResponseEntity.ok(new LaboatorioDto(laboratorio));
+			try {
+				Laboratorio laboratorio = laboratorioRepository.getById(id);
+				laboratorio.setNome(laboratorioForm.getNome());
+				return ResponseEntity.ok(new LaboatorioDto(laboratorio));
+			} catch (RuntimeException exception) {
+				throw exception;
+			}
 		}
 	}
 

@@ -2,25 +2,8 @@ package br.com.Calculadora.Form;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Optional;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import br.com.Calculadora.Dto.MedicamentoDto;
-import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
-import br.com.Calculadora.Repository.LaboratorioRepository;
-import br.com.Calculadora.Repository.MedicamentoRepository;
-import br.com.Calculadora.orm.GrupoMedicamento;
-import br.com.Calculadora.orm.Laboratorio;
-import br.com.Calculadora.orm.Medicamento;
 
 public class MedicamentoForm {
 	@NotBlank(message = "Nome não pode ser nulo nem vazio")
@@ -53,35 +36,6 @@ public class MedicamentoForm {
 		this.infoTempoAdministracao = infoTempoAdministracao;
 		this.unidadeMedida = unidadeMedida;
 		this.embalagemApresentada = embalagemApresentada;
-	}
-
-	public Medicamento converter(LaboratorioRepository laboratorioRepository,
-			GrupoMedicamentoRepository grupoMedicamentoRepository) {
-		
-		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(idLaboratorio);
-		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(idGrupoMedicamento);
-
-		return (new Medicamento(nome, grupoMedicamento.get(), laboratorio.get(), quantidadeApresentacao, concentracaoInicial,
-				infoSobra, infoObservacao, infoTempoAdministracao, unidadeMedida, embalagemApresentada));
-	}
-
-	public Medicamento atualizar(BigInteger id, MedicamentoRepository medicamentoRepository,
-			LaboratorioRepository laboratorioRepository, GrupoMedicamentoRepository grupoMedicamentoRepository) {
-		Medicamento medicamento = medicamentoRepository.getOne(id);
-		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(idLaboratorio);
-		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(idGrupoMedicamento);
-
-		medicamento.setNome(nome);
-		medicamento.setGrupoMedicamento(grupoMedicamento.get());
-		medicamento.setLaboratorio(laboratorio.get());
-		medicamento.setQuantidadeApresentacao(quantidadeApresentacao);
-		medicamento.setConcentracaoInicial(concentracaoInicial);
-		medicamento.setInfoSobra(infoSobra);
-		medicamento.setInfoObservacao(infoObservacao);
-		medicamento.setInfoTempoAdministracao(infoTempoAdministracao);
-		medicamento.setUnidadeMedida(unidadeMedida);
-		medicamento.setEmbalagemApresentada(embalagemApresentada);
-		return medicamento;
 	}
 
 	public String getNome() {

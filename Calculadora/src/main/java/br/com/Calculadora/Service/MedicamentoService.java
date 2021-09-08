@@ -6,16 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.Calculadora.Dto.GrupoMedicamentoDto;
-import br.com.Calculadora.Dto.LaboatorioDto;
 import br.com.Calculadora.Dto.MedicamentoDto;
 import br.com.Calculadora.Form.MedicamentoForm;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
@@ -59,8 +55,10 @@ public class MedicamentoService {
 			throw new RuntimeException();
 		} else {
 			Optional<Laboratorio> laboratorio = laboratorioRepository.findById(medicamentoForm.getIdLaboratorio());
-			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento());	
-			Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(medicamentoForm, laboratorio.get(), grupoMedicamento.get());
+			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository
+					.findById(medicamentoForm.getIdGrupoMedicamento());
+			Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(medicamentoForm,
+					laboratorio.get(), grupoMedicamento.get());
 			medicamentoRepository.save(medicamento);
 
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(medicamento.getId()).toUri();
@@ -72,23 +70,30 @@ public class MedicamentoService {
 		if (!medicamentoRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
-			MedicamentoDto medicamentoDto = new MedicamentoDto(medicamento.get());
-			medicamentoRepository.deleteById(id);
-			return (ResponseEntity.ok(medicamentoDto));
+			try {
+				Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
+				MedicamentoDto medicamentoDto = new MedicamentoDto(medicamento.get());
+				medicamentoRepository.deleteById(id);
+				return (ResponseEntity.ok(medicamentoDto));
+			} catch (RuntimeException exception) {
+				throw exception;
+			}
 		}
 	}
 
-	public ResponseEntity<MedicamentoDto> atualizar(BigInteger id, MedicamentoForm medicamentoForm,
-			BindingResult result) {
-		if (result.hasErrors() || !medicamentoRepository.existsById(id)
+	public ResponseEntity<MedicamentoDto> atualizar(BigInteger id, MedicamentoForm medicamentoForm) {
+		if (!medicamentoRepository.existsById(id)
 				|| (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
 				|| (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null)) {
 			throw new RuntimeException();
 		} else {
-			Medicamento medicamento = medicamentoForm.atualizar(id, medicamentoRepository, laboratorioRepository,
-					grupoMedicamentoRepository);
-			return (ResponseEntity.ok(new MedicamentoDto(medicamento)));
+			try {
+				Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(id, medicamentoForm,
+						medicamentoRepository, grupoMedicamentoRepository, laboratorioRepository);
+				return (ResponseEntity.ok(new MedicamentoDto(medicamento)));
+			} catch (RuntimeException exception) {
+				throw exception;
+			}
 		}
 	}
 }

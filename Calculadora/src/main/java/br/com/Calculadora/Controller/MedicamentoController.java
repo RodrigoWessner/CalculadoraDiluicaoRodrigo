@@ -8,20 +8,16 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.MedicamentoDto;
 import br.com.Calculadora.Form.MedicamentoForm;
-import br.com.Calculadora.Repository.MedicamentoRepository;
 import br.com.Calculadora.Service.MedicamentoService;
-import br.com.Calculadora.orm.Medicamento;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -60,9 +56,8 @@ public class MedicamentoController {
 	@ApiOperation(value = "Atualizar Medicamento")
 	@RequestMapping(value = "/atulizar/{id}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm,
-			BindingResult result) {
-		return (medicamentoService.atualizar(id, medicamentoForm, result));
+	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm) {
+		return (medicamentoService.atualizar(id, medicamentoForm));
 	}
 
 }

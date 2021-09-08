@@ -1,7 +1,6 @@
 package br.com.Calculadora.Controller;
 
 import java.math.BigInteger;
-import java.net.URI;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
-import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.Service.GrupoMedicamentoService;
-import br.com.Calculadora.orm.GrupoMedicamento;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -30,9 +26,6 @@ import io.swagger.annotations.ApiOperation;
 public class GrupoMedicamentoController {
 
 	GrupoMedicamentoService grupoMedicamentoService;
-
-	@Autowired
-	private GrupoMedicamentoRepository grupoMedicamentoRepository;
 
 	@Autowired
 	public GrupoMedicamentoController(GrupoMedicamentoService grupoMedicamentoService) {
@@ -57,18 +50,14 @@ public class GrupoMedicamentoController {
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(@PathVariable BigInteger id,
-			@Valid GrupoMedicamentoForm grupoMedicamentoForm, BindingResult result) {
-		return (grupoMedicamentoService.atualizar(id, grupoMedicamentoForm, result));
+			@Valid GrupoMedicamentoForm grupoMedicamentoForm) {
+		return (grupoMedicamentoService.atualizar(id, grupoMedicamentoForm));
 	}
 
 	@ApiOperation(value = "Remove Grupo_Medicamento")
 	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
 	@Transactional
 	public ResponseEntity<GrupoMedicamentoDto> remover(@PathVariable BigInteger id) {
-		if (!grupoMedicamentoRepository.existsById(id)) {
-			throw new RuntimeException();
-		} else {
-			return (grupoMedicamentoService.remover(id));
-		}
+		return (grupoMedicamentoService.remover(id));
 	}
 }

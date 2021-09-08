@@ -11,15 +11,12 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
-import br.com.Calculadora.Dto.LaboatorioDto;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.orm.GrupoMedicamento;
-import br.com.Calculadora.orm.Laboratorio;
 
 @Service
 public class GrupoMedicamentoService {
@@ -49,7 +46,6 @@ public class GrupoMedicamentoService {
 			GrupoMedicamento grupoMedicamento = new GrupoMedicamento(grupoMedicamentoForm.getNome());
 			grupoMedicamentoRepository.save(grupoMedicamento);
 
-			// boas praticas, retorno 201
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri();
 			return ResponseEntity.created(uri).body(new GrupoMedicamentoDto(grupoMedicamento));
 		} catch (RuntimeException exception) {
@@ -57,13 +53,17 @@ public class GrupoMedicamentoService {
 		}
 	}
 
-	public ResponseEntity<GrupoMedicamentoDto> atualizar(BigInteger id, GrupoMedicamentoForm grupoMedicamentoForm,
-			BindingResult result) {
-		if (result.hasErrors() || !grupoMedicamentoRepository.existsById(id)) {
+	public ResponseEntity<GrupoMedicamentoDto> atualizar(BigInteger id, GrupoMedicamentoForm grupoMedicamentoForm) {
+		if (!grupoMedicamentoRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			GrupoMedicamento grupoMedicamento = grupoMedicamentoForm.atualizar(id, grupoMedicamentoRepository);
-			return ResponseEntity.ok(new GrupoMedicamentoDto(grupoMedicamento));
+			try {
+				GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.getById(id);
+				grupoMedicamento.setNome(grupoMedicamentoForm.getNome());
+				return ResponseEntity.ok(new GrupoMedicamentoDto(grupoMedicamento));
+			} catch (RuntimeException exception) {
+				throw exception;
+			}
 		}
 	}
 
@@ -71,10 +71,18 @@ public class GrupoMedicamentoService {
 		if (!grupoMedicamentoRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-			GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
-			grupoMedicamentoRepository.deleteById(id);
-			return (ResponseEntity.ok(grupoMedicamentoDto));
+			try {
+				Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
+				GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
+				grupoMedicamentoRepository.deleteById(id);
+				return (ResponseEntity.ok(grupoMedicamentoDto));
+			} catch (RuntimeException exception) {
+				throw exception;
+			}
 		}
 	}
+	/*
+	 public static List<GrupoMedicamentoDto> converter(List<GrupoMedicamento> grupoMedicamento){
+		return grupoMedicamento.stream().map(GrupoMedicamentoDto::new).collect(Collectors.toList());
+	}*/
 }

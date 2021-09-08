@@ -1,8 +1,6 @@
 package br.com.Calculadora.Dto;
 
 import java.math.BigInteger;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import br.com.Calculadora.orm.GrupoMedicamento;
 
@@ -24,8 +22,5 @@ public class GrupoMedicamentoDto {
 		return nome;
 	}
 	
-	public static List<GrupoMedicamentoDto> converter(List<GrupoMedicamento> grupoMedicamento){
-		return grupoMedicamento.stream().map(GrupoMedicamentoDto::new).collect(Collectors.toList());
-	}
 
 }
