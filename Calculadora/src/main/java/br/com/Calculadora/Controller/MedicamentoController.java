@@ -46,8 +46,8 @@ public class MedicamentoController {
 	@ApiOperation(value = "Criar Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
 	public ResponseEntity<MedicamentoDto> criar(@RequestBody @Valid MedicamentoForm medicamentoForm,
-			UriComponentsBuilder uriBuilder, BindingResult result) {
-		return medicamentoService.criar(medicamentoForm, uriBuilder, result);
+			UriComponentsBuilder uriBuilder) {
+		return medicamentoService.criar(medicamentoForm, uriBuilder);
 	}
 
 	@ApiOperation(value = "Deletar Medicamento")

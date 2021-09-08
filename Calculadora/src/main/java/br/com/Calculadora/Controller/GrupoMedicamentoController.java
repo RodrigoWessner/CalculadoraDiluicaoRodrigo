@@ -49,8 +49,8 @@ public class GrupoMedicamentoController {
 	@ApiOperation(value = "Insere nome Grupo_Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
 	public ResponseEntity<GrupoMedicamentoDto> criar(@RequestBody @Valid GrupoMedicamentoForm grupoMedicamentoForm,
-			UriComponentsBuilder uriBuilder, BindingResult result) {// pega info do corpo
-		return grupoMedicamentoService.criar(grupoMedicamentoForm, uriBuilder, result);
+			UriComponentsBuilder uriBuilder) {// pega info do corpo
+		return grupoMedicamentoService.criar(grupoMedicamentoForm, uriBuilder);
 	}
 
 	@ApiOperation(value = "Atualiza Grupo_Medicamento")

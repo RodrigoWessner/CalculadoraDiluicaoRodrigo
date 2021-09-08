@@ -19,10 +19,6 @@ public class LaboratorioForm {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	public Laboratorio converter() {
-		return(new Laboratorio(nome));
-	}
 	
 	public Laboratorio atualizar(BigInteger id, LaboratorioRepository laboratorioRepository) {
 		Laboratorio laboratorio = laboratorioRepository.getOne(id); //option

@@ -34,24 +34,23 @@ public class LaboratorioService {
 	public ResponseEntity<List<LaboatorioDto>> lista() {
 		List<Laboratorio> laboratorio = laboratorioRepository.findAll();
 		List<LaboatorioDto> laboratorioDtoList = new ArrayList<LaboatorioDto>();
-		
-		laboratorio.forEach(lab ->{
+
+		laboratorio.forEach(lab -> {
 			laboratorioDtoList.add(new LaboatorioDto(lab));
 		});
 
 		return ResponseEntity.ok(laboratorioDtoList);
 	}
 
-	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, BindingResult result,
-			UriComponentsBuilder uriBuilder) {
-		if (result.hasErrors()) {
-			throw new RuntimeException();
-		} else {			
-			Laboratorio laboratorio = laboratorioForm.converter();
+	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder) {
+		try{
+			Laboratorio laboratorio = new Laboratorio(laboratorioForm.getNome());
 			laboratorioRepository.save(laboratorio);
 
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(laboratorio.getId()).toUri();
 			return ResponseEntity.created(uri).body(new LaboatorioDto(laboratorio));
+		}catch (RuntimeException exception) {
+			throw exception;
 		}
 	}
 

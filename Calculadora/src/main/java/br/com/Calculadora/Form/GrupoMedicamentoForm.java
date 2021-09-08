@@ -22,10 +22,6 @@ public class GrupoMedicamentoForm {
 		this.nome = nome;
 	}
 
-	public GrupoMedicamento converter() {
-		return new GrupoMedicamento(nome);
-	}
-
 	public GrupoMedicamento atualizar(BigInteger id, GrupoMedicamentoRepository grupoMedicamentoRepository) {
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.getOne(id);
 		grupoMedicamento.setNome(nome);

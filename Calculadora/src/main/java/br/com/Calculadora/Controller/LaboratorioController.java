@@ -44,8 +44,8 @@ public class LaboratorioController {
 	
 	@ApiOperation(value = "Insere nome Laboratorio")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
-	public ResponseEntity<LaboatorioDto> criar(@RequestBody @Valid LaboratorioForm laboratorioForm, BindingResult result, UriComponentsBuilder uriBuilder){
-		return(laboratorioService.criar(laboratorioForm, result, uriBuilder));
+	public ResponseEntity<LaboatorioDto> criar(@RequestBody @Valid LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder){
+		return(laboratorioService.criar(laboratorioForm, uriBuilder));
 	}
 	
 	@ApiOperation(value = "Atualiza Laboratorio")

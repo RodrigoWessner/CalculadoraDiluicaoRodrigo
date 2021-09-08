@@ -45,21 +45,22 @@ public class MedicamentoService {
 	public ResponseEntity<List<MedicamentoDto>> lista() {
 		List<Medicamento> medicamento = medicamentoRepository.findAll();
 		List<MedicamentoDto> MedicamentoList = new ArrayList<MedicamentoDto>();
-		
-		medicamento.forEach(med ->{
+
+		medicamento.forEach(med -> {
 			MedicamentoList.add(new MedicamentoDto(med));
 		});
 
 		return ResponseEntity.ok(MedicamentoList);
 	}
 
-	public ResponseEntity<MedicamentoDto> criar(@Valid MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder,
-			BindingResult result) {
-		if (result.hasErrors() || (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
+	public ResponseEntity<MedicamentoDto> criar(MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder) {
+		if ((grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
 				|| (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null)) {
 			throw new RuntimeException();
 		} else {
-			Medicamento medicamento = medicamentoForm.converter(laboratorioRepository, grupoMedicamentoRepository);
+			Optional<Laboratorio> laboratorio = laboratorioRepository.findById(medicamentoForm.getIdLaboratorio());
+			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento());	
+			Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(medicamentoForm, laboratorio.get(), grupoMedicamento.get());
 			medicamentoRepository.save(medicamento);
 
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(medicamento.getId()).toUri();
@@ -80,7 +81,8 @@ public class MedicamentoService {
 
 	public ResponseEntity<MedicamentoDto> atualizar(BigInteger id, MedicamentoForm medicamentoForm,
 			BindingResult result) {
-		if (result.hasErrors() || !medicamentoRepository.existsById(id) || (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
+		if (result.hasErrors() || !medicamentoRepository.existsById(id)
+				|| (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
 				|| (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null)) {
 			throw new RuntimeException();
 		} else {

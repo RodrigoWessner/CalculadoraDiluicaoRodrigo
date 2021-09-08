@@ -33,10 +33,10 @@ public class GrupoMedicamentoService {
 
 	// Metodos
 	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
-		List<GrupoMedicamento> grupoMedicamento= grupoMedicamentoRepository.findAll();
+		List<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findAll();
 		List<GrupoMedicamentoDto> grupoMedicamentoList = new ArrayList<GrupoMedicamentoDto>();
-		
-		grupoMedicamento.forEach(grupo ->{
+
+		grupoMedicamento.forEach(grupo -> {
 			grupoMedicamentoList.add(new GrupoMedicamentoDto(grupo));
 		});
 
@@ -44,16 +44,16 @@ public class GrupoMedicamentoService {
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> criar(@Valid GrupoMedicamentoForm grupoMedicamentoForm,
-			UriComponentsBuilder uriBuilder, BindingResult result) {// pega info do corpo
-		if (result.hasErrors()) {
-			throw new RuntimeException();
-		} else {
-			GrupoMedicamento grupoMedicamento = grupoMedicamentoForm.converter();
+			UriComponentsBuilder uriBuilder) {// pega info do corpo
+		try {
+			GrupoMedicamento grupoMedicamento = new GrupoMedicamento(grupoMedicamentoForm.getNome());
 			grupoMedicamentoRepository.save(grupoMedicamento);
 
 			// boas praticas, retorno 201
 			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri();
 			return ResponseEntity.created(uri).body(new GrupoMedicamentoDto(grupoMedicamento));
+		} catch (RuntimeException exception) {
+			throw exception;
 		}
 	}
 
