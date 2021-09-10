@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(value = "API REST Laboratorio")
 @RestController
-@RequestMapping("/Laboratorio")
+@RequestMapping("/laboratorio")
 public class LaboratorioController {
 
 	LaboratorioService laboratorioService;
@@ -34,7 +34,7 @@ public class LaboratorioController {
 	}
 	
 	@ApiOperation(value = "Retorna lista da base")
-	@RequestMapping(value = "/lista", method = RequestMethod.GET)
+	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	public ResponseEntity<List<LaboatorioDto>> lista(){
 		return(laboratorioService.lista());
 	}
@@ -45,7 +45,7 @@ public class LaboratorioController {
 		return(laboratorioService.criar(laboratorioForm, uriBuilder));
 	}
 	
-	@ApiOperation(value = "Atualiza Laboratorio")
+	@ApiOperation(value = "Atualizar Laboratorio")
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
 	public ResponseEntity<LaboatorioDto> atualizar(@PathVariable BigInteger id, @Valid LaboratorioForm laboratorioForm){
@@ -58,5 +58,7 @@ public class LaboratorioController {
 	public ResponseEntity<LaboatorioDto> remover(@PathVariable BigInteger id){
 		return(laboratorioService.remover(id));
 	}
+	
+	
 	
 }

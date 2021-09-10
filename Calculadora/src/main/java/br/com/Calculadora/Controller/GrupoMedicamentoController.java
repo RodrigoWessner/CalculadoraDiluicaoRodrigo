@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(value = "API REST Grupo_Medicamento")
 @RestController
-@RequestMapping("/GrupoMedicamento")
+@RequestMapping("/grupoMedicamento")
 public class GrupoMedicamentoController {
 
 	GrupoMedicamentoService grupoMedicamentoService;

@@ -1,9 +1,8 @@
 package br.com.Calculadora.Form;
 
-public class LaboratorioForm {
-	
+public class ViaAdministracaoForm {
 	private String nome;
-	
+
 	public String getNome() {
 		return nome;
 	}

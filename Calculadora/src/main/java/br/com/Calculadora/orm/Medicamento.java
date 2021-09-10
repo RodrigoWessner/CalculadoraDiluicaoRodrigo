@@ -5,6 +5,7 @@ import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,11 +21,11 @@ public class Medicamento {
 	@Column(nullable = false)
 	private String nome;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	//@JoinColumn(name = "id_grupo_medicamento")
 	private GrupoMedicamento grupoMedicamento;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	//@JoinColumn(name = "id_laboratorio")
 	private Laboratorio laboratorio;
 	

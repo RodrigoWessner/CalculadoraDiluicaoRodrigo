@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "API REST Medicamentos")
-@RequestMapping("/Medicamento")
+@RequestMapping("/medicamento")
 public class MedicamentoController {
 
 	MedicamentoService medicamentoService;
@@ -47,14 +47,14 @@ public class MedicamentoController {
 	}
 
 	@ApiOperation(value = "Deletar Medicamento")
-	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
 	@Transactional
 	public ResponseEntity<MedicamentoDto> deletar(@PathVariable BigInteger id) {
 		return medicamentoService.remover(id);
 	}
 
 	@ApiOperation(value = "Atualizar Medicamento")
-	@RequestMapping(value = "/atulizar/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
 	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm) {
 		return (medicamentoService.atualizar(id, medicamentoForm));
