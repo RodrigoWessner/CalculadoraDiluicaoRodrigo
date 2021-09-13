@@ -1,27 +1,24 @@
-package br.com.Calculadora.orm;
+package br.com.Calculadora.Form;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-
-@Entity
-public class DiluicaoConfiguracao {
-
-	@EmbeddedId
-	private DiluicaoConfiguracaoPK diluicaoConfiguracaoPK;
-
+public class DiluicaoConfiguracaoForm {
+	private BigInteger sequencia;
+	private BigInteger medicamentoId;
+	private BigInteger viaAdministracaoId;
 	private BigDecimal quantidadeAspirada;
 	private BigDecimal quantidadeAdicionada;
 	private BigDecimal concentracao;
 	private String modoPreparo;
 	private String diluente;
 
-	public DiluicaoConfiguracao(Medicamento medicamento, ViaAdministracao viaAdministracao, BigInteger sequencia,
+	public DiluicaoConfiguracaoForm(BigInteger sequencia, BigInteger medicamentoId, BigInteger viaAdministracaoId,
 			BigDecimal quantidadeAspirada, BigDecimal quantidadeAdicionada, BigDecimal concentracao, String modoPreparo,
 			String diluente) {
-		this.diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao, sequencia);
+		this.sequencia = sequencia;
+		this.medicamentoId = medicamentoId;
+		this.viaAdministracaoId = viaAdministracaoId;
 		this.quantidadeAspirada = quantidadeAspirada;
 		this.quantidadeAdicionada = quantidadeAdicionada;
 		this.concentracao = concentracao;
@@ -29,38 +26,28 @@ public class DiluicaoConfiguracao {
 		this.diluente = diluente;
 	}
 
-	public DiluicaoConfiguracao() {
-	}
-	public void setDiluicaoConfiguracaoPK(Medicamento medicamento, ViaAdministracao viaAdministracao, BigInteger sequencia) {
-		this.diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao, sequencia);
-	}
-
-	public DiluicaoConfiguracaoPK getDiluicaoConfiguracaoPK() {
-		return diluicaoConfiguracaoPK;
+	public BigInteger getSequencia() {
+		return sequencia;
 	}
 
 	public void setSequencia(BigInteger sequencia) {
-		this.diluicaoConfiguracaoPK.setSequencia(sequencia);
+		this.sequencia = sequencia;
 	}
 
-	public void setMedicamento(Medicamento medicamento) {
-		this.diluicaoConfiguracaoPK.setMedicamento(medicamento);
+	public BigInteger getMedicamentoId() {
+		return medicamentoId;
 	}
 
-	public void setViaAdministracao(ViaAdministracao viaAdministracao) {
-		this.diluicaoConfiguracaoPK.setViaAdministracao(viaAdministracao);
+	public void setMedicamentoId(BigInteger medicamentoId) {
+		this.medicamentoId = medicamentoId;
 	}
 
-	public Medicamento getMedicamento() {
-		return this.diluicaoConfiguracaoPK.getMedicamento();
+	public BigInteger getViaAdministracaoId() {
+		return viaAdministracaoId;
 	}
 
-	public ViaAdministracao getViaAdministracao() {
-		return this.diluicaoConfiguracaoPK.getViaAdministracao();
-	}
-
-	public BigInteger getSequencia() {
-		return this.diluicaoConfiguracaoPK.getSequencia();
+	public void setViaAdministracaoId(BigInteger viaAdministracaoId) {
+		this.viaAdministracaoId = viaAdministracaoId;
 	}
 
 	public BigDecimal getQuantidadeAspirada() {

@@ -6,15 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class MedicamentoForm {
-	@NotBlank(message = "Nome não pode ser nulo nem vazio")
 	private String nome;
-
-	@NotNull
 	private BigInteger idGrupoMedicamento;
-
-	@NotNull
 	private BigInteger idLaboratorio;
-
 	private BigDecimal quantidadeApresentacao;
 	private BigDecimal concentracaoInicial;
 	private String infoSobra;

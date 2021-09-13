@@ -5,7 +5,6 @@ import java.math.BigInteger;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Embeddable
@@ -29,6 +28,18 @@ public class DiluicaoConfiguracaoPK implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void setMedicamento(Medicamento medicamento) {
+		this.medicamento = medicamento;
+	}
+
+	public void setViaAdministracao(ViaAdministracao viaAdministracao) {
+		this.viaAdministracao = viaAdministracao;
+	}
+
+	public void setSequencia(BigInteger sequencia) {
+		this.sequencia = sequencia;
+	}
+
 	public Medicamento getMedicamento() {
 		return medicamento;
 	}
@@ -39,6 +50,14 @@ public class DiluicaoConfiguracaoPK implements Serializable {
 
 	public BigInteger getSequencia() {
 		return sequencia;
+		
+		
+	}
+
+	@Override
+	public String toString() {
+		return "DiluicaoConfiguracaoPK [medicamento=" + medicamento.getId() + ", viaAdministracao=" + viaAdministracao.getId()
+				+ ", sequencia=" + sequencia + "]";
 	}
 
 }
