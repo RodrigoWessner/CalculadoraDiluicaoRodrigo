@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,12 +30,22 @@ public class LaboratorioService {
 	public ResponseEntity<List<LaboatorioDto>> lista() {
 		List<Laboratorio> laboratorio = laboratorioRepository.findAll();
 		List<LaboatorioDto> laboratorioDtoList = new ArrayList<LaboatorioDto>();
-
 		laboratorio.forEach(lab -> {
 			laboratorioDtoList.add(new LaboatorioDto(lab));
 		});
-
 		return ResponseEntity.ok(laboratorioDtoList);
+	}
+
+	public ResponseEntity<LaboatorioDto> lista(BigInteger id) {
+		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(id);
+		LaboatorioDto laboratorioDto = new LaboatorioDto(laboratorio.get());
+		return ResponseEntity.ok(laboratorioDto);
+	}
+	
+	public ResponseEntity<LaboatorioDto> lista(String nome) {
+		Laboratorio laboratorio = laboratorioRepository.findByNome(nome);
+		LaboatorioDto laboratorioDto = new LaboatorioDto(laboratorio);
+		return ResponseEntity.ok(laboratorioDto);
 	}
 
 	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder) {

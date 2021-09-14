@@ -36,8 +36,19 @@ public class GrupoMedicamentoService {
 		grupoMedicamento.forEach(grupo -> {
 			grupoMedicamentoList.add(new GrupoMedicamentoDto(grupo));
 		});
-
 		return ResponseEntity.ok(grupoMedicamentoList);
+	}
+
+	public ResponseEntity<GrupoMedicamentoDto> lista(BigInteger id) {
+		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
+		GrupoMedicamentoDto grupoMedicamentoDto= new GrupoMedicamentoDto(grupoMedicamento.get());
+		return ResponseEntity.ok(grupoMedicamentoDto);
+	}
+
+	public ResponseEntity<GrupoMedicamentoDto> lista(String nome) {
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nome);
+		GrupoMedicamentoDto grupoMedicamentoDto= new GrupoMedicamentoDto(grupoMedicamento);
+		return ResponseEntity.ok(grupoMedicamentoDto);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> criar(@Valid GrupoMedicamentoForm grupoMedicamentoForm,
@@ -82,7 +93,9 @@ public class GrupoMedicamentoService {
 		}
 	}
 	/*
-	 public static List<GrupoMedicamentoDto> converter(List<GrupoMedicamento> grupoMedicamento){
-		return grupoMedicamento.stream().map(GrupoMedicamentoDto::new).collect(Collectors.toList());
-	}*/
+	 * public static List<GrupoMedicamentoDto> converter(List<GrupoMedicamento>
+	 * grupoMedicamento){ return
+	 * grupoMedicamento.stream().map(GrupoMedicamentoDto::new).collect(Collectors.
+	 * toList()); }
+	 */
 }

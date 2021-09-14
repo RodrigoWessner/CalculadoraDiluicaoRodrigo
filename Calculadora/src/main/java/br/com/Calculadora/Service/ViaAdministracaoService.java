@@ -30,15 +30,26 @@ public class ViaAdministracaoService {
 	public ResponseEntity<List<ViaAdministracaoDTO>> lista() {
 		List<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findAll();
 		List<ViaAdministracaoDTO> viaAdministracaoList = new ArrayList<ViaAdministracaoDTO>();
-
 		viaAdministracao.forEach(via -> {
 			viaAdministracaoList.add(new ViaAdministracaoDTO(via));
 		});
-
 		return ResponseEntity.ok(viaAdministracaoList);
 	}
 
-	public ResponseEntity<ViaAdministracaoDTO> criar(ViaAdministracaoForm viaAdministracaoForm, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<ViaAdministracaoDTO> lista(BigInteger id) {
+		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(id);
+		ViaAdministracaoDTO viaAdministracaoDTO = new ViaAdministracaoDTO(viaAdministracao.get());
+		return ResponseEntity.ok(viaAdministracaoDTO);
+	}
+
+	public ResponseEntity<ViaAdministracaoDTO> lista(String nome) {
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findByNome(nome);
+		ViaAdministracaoDTO viaAdministracaoDTO = new ViaAdministracaoDTO(viaAdministracao);
+		return ResponseEntity.ok(viaAdministracaoDTO);
+	}
+
+	public ResponseEntity<ViaAdministracaoDTO> criar(ViaAdministracaoForm viaAdministracaoForm,
+			UriComponentsBuilder uriBuilder) {
 		try {
 			ViaAdministracao viaAdministracao = new ViaAdministracao(viaAdministracaoForm.getNome());
 			viaAdministracaoRepository.save(viaAdministracao);
@@ -68,7 +79,7 @@ public class ViaAdministracaoService {
 		if (!viaAdministracaoRepository.existsById(id)) {
 			throw new RuntimeException();
 		} else {
-			Optional<ViaAdministracao> viaAdministracao= viaAdministracaoRepository.findById(id);
+			Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(id);
 			ViaAdministracaoDTO viaAdministracaoDto = new ViaAdministracaoDTO(viaAdministracao.get());
 			viaAdministracaoRepository.deleteById(id);
 			return (ResponseEntity.ok(viaAdministracaoDto));

@@ -17,6 +17,7 @@ public class MedicamentoForm {
 	private String unidadeMedida;
 	private String embalagemApresentada;
 
+	//List<diluicaoConfiguracao>
 	public MedicamentoForm(String nome, BigInteger idGrupoMedicamento, BigInteger idLaboratorio,
 			BigDecimal quantidadeApresentacao, BigDecimal concentracaoInicial, String infoSobra, String infoObservacao,
 			String infoTempoAdministracao, String unidadeMedida, String embalagemApresentada) {

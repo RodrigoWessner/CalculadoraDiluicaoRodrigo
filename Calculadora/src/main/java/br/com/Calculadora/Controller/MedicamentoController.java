@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,6 +40,18 @@ public class MedicamentoController {
 		return (medicamentoService.lista());
 	}
 
+	@ApiOperation(value = "Retorna entidade do id")
+	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
+	public ResponseEntity<MedicamentoDto> lista(@RequestParam BigInteger id) {
+		return (medicamentoService.lista(id));
+	}
+
+	@ApiOperation(value = "Retorna entidade do nome")
+	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
+	public ResponseEntity<List<MedicamentoDto>> lista(@RequestParam String nome) {
+		return (medicamentoService.lista(nome));
+	}
+
 	@ApiOperation(value = "Criar Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
 	public ResponseEntity<MedicamentoDto> criar(@RequestBody @Valid MedicamentoForm medicamentoForm,
@@ -56,7 +69,8 @@ public class MedicamentoController {
 	@ApiOperation(value = "Atualizar Medicamento")
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id, @Valid MedicamentoForm medicamentoForm) {
+	public ResponseEntity<MedicamentoDto> atualizar(@PathVariable BigInteger id,
+			@Valid MedicamentoForm medicamentoForm) {
 		return (medicamentoService.atualizar(id, medicamentoForm));
 	}
 

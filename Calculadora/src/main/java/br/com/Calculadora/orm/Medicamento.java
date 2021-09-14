@@ -1,6 +1,7 @@
 package br.com.Calculadora.orm;
 
 import java.math.BigDecimal;
+
 import java.math.BigInteger;
 
 import javax.persistence.Column;
@@ -11,6 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Medicamento {
 	@Id

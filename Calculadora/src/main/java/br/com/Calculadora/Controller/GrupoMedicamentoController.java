@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
 import br.com.Calculadora.Service.GrupoMedicamentoService;
@@ -36,7 +38,18 @@ public class GrupoMedicamentoController {
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
 		return grupoMedicamentoService.lista();
-
+	}
+	
+	@ApiOperation(value = "Retorna entidade do id")
+	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
+	public ResponseEntity<GrupoMedicamentoDto> lista(@RequestParam BigInteger id){
+		return(grupoMedicamentoService.lista(id));
+	}
+	
+	@ApiOperation(value = "Retorna entidade do nome")
+	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
+	public ResponseEntity<GrupoMedicamentoDto> lista(@RequestParam String nome){
+		return(grupoMedicamentoService.lista(nome));
 	}
 
 	@ApiOperation(value = "Insere nome Grupo_Medicamento")

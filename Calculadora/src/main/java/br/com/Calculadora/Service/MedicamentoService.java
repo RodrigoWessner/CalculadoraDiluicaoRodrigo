@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,21 @@ public class MedicamentoService {
 		});
 
 		return ResponseEntity.ok(MedicamentoList);
+	}
+
+	public ResponseEntity<MedicamentoDto> lista(BigInteger id) {
+		Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
+		MedicamentoDto medicamentoDto = new MedicamentoDto(medicamento.get());
+		return ResponseEntity.ok(medicamentoDto);
+	}
+
+	public ResponseEntity<List<MedicamentoDto>> lista(String nome) {
+		List<Medicamento> medicamentoList = medicamentoRepository.findByNome(nome);
+		List<MedicamentoDto> medicamentoDtoList = new ArrayList<MedicamentoDto>();
+		medicamentoList.forEach(med -> {
+			medicamentoDtoList.add(new MedicamentoDto(med));
+		});
+		return ResponseEntity.ok(medicamentoDtoList);
 	}
 
 	public ResponseEntity<MedicamentoDto> criar(MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder) {
