@@ -2,8 +2,10 @@ package br.com.Calculadora.Form;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
 
-public class MedicamentoForm {
+public class MedicamentoConfiguracaoForm {
 	private String nome;
 	private BigInteger idGrupoMedicamento;
 	private BigInteger idLaboratorio;
@@ -14,10 +16,13 @@ public class MedicamentoForm {
 	private String infoTempoAdministracao;
 	private String unidadeMedida;
 	private String embalagemApresentada;
+	List<DiluicaoConfiguracaoAtualizarForm> diluicaoConfiguracaoList;
 
-	public MedicamentoForm(String nome, BigInteger idGrupoMedicamento, BigInteger idLaboratorio,
+	// List<diluicaoConfiguracao>
+	public MedicamentoConfiguracaoForm(String nome, BigInteger idGrupoMedicamento, BigInteger idLaboratorio,
 			BigDecimal quantidadeApresentacao, BigDecimal concentracaoInicial, String infoSobra, String infoObservacao,
-			String infoTempoAdministracao, String unidadeMedida, String embalagemApresentada) {
+			String infoTempoAdministracao, String unidadeMedida, String embalagemApresentada,
+			List<DiluicaoConfiguracaoAtualizarForm> diluicaoConfiguracaoForm) {
 		this.nome = nome;
 		this.idGrupoMedicamento = idGrupoMedicamento;
 		this.idLaboratorio = idLaboratorio;
@@ -28,6 +33,30 @@ public class MedicamentoForm {
 		this.infoTempoAdministracao = infoTempoAdministracao;
 		this.unidadeMedida = unidadeMedida;
 		this.embalagemApresentada = embalagemApresentada;
+		diluicaoConfiguracaoForm.forEach(diluicao -> {
+			this.diluicaoConfiguracaoList.add(diluicao);
+		});
+	}
+
+	/*
+	 * public MedicamentoConfiguracaoForm(String nome, BigInteger
+	 * idGrupoMedicamento, BigInteger idLaboratorio, BigDecimal
+	 * quantidadeApresentacao, BigDecimal concentracaoInicial, String infoSobra,
+	 * String infoObservacao, String infoTempoAdministracao, String unidadeMedida,
+	 * String embalagemApresentada) { this.nome = nome; this.idGrupoMedicamento =
+	 * idGrupoMedicamento; this.idLaboratorio = idLaboratorio;
+	 * this.quantidadeApresentacao = quantidadeApresentacao;
+	 * this.concentracaoInicial = concentracaoInicial; this.infoSobra = infoSobra;
+	 * this.infoObservacao = infoObservacao; this.infoTempoAdministracao =
+	 * infoTempoAdministracao; this.unidadeMedida = unidadeMedida;
+	 * this.embalagemApresentada = embalagemApresentada; }
+	 */
+	public MedicamentoConfiguracaoForm() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public List<DiluicaoConfiguracaoAtualizarForm> getDiluicaoConfiguracaoList() {
+		return Collections.unmodifiableList(diluicaoConfiguracaoList);
 	}
 
 	public String getNome() {

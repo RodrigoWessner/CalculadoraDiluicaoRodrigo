@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
+import br.com.Calculadora.Form.MedicamentoConfiguracaoForm;
 import br.com.Calculadora.Form.MedicamentoForm;
 import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
@@ -18,6 +19,22 @@ import br.com.Calculadora.orm.Medicamento;
 import br.com.Calculadora.orm.ViaAdministracao;
 
 public class OperacoesService {
+	public Medicamento medicamentoConfiguracaoFormToMedicamento(MedicamentoConfiguracaoForm medicamentoConfiguracaoForm,
+			Laboratorio laboratorio, GrupoMedicamento grupoMedicamento) {
+		Medicamento medicamento = new Medicamento();
+		medicamento.setNome(medicamentoConfiguracaoForm.getNome());
+		medicamento.setLaboratorio(laboratorio);
+		medicamento.setGrupoMedicamento(grupoMedicamento);
+		medicamento.setConcentracaoInicial(medicamentoConfiguracaoForm.getConcentracaoInicial());
+		medicamento.setEmbalagemApresentada(medicamentoConfiguracaoForm.getEmbalagemApresentada());
+		medicamento.setInfoObservacao(medicamentoConfiguracaoForm.getInfoObservacao());
+		medicamento.setInfoSobra(medicamentoConfiguracaoForm.getInfoSobra());
+		medicamento.setInfoTempoAdministracao(medicamentoConfiguracaoForm.getInfoTempoAdministracao());
+		medicamento.setQuantidadeApresentacao(medicamentoConfiguracaoForm.getQuantidadeApresentacao());
+		medicamento.setUnidadeMedida(medicamentoConfiguracaoForm.getUnidadeMedida());
+		return medicamento;
+	}
+	
 
 	public Medicamento medicamentoFormToMedicamento(MedicamentoForm medicamentoForm, Laboratorio laboratorio,
 			GrupoMedicamento grupoMedicamento) {
@@ -55,14 +72,53 @@ public class OperacoesService {
 		medicamento.setUnidadeMedida(medicamentoForm.getUnidadeMedida());
 		return medicamento;
 	}
+	
+	public Medicamento medicamentoFormToMedicamento(BigInteger id, MedicamentoConfiguracaoForm medicamentoConfiguracaoForm,
+			MedicamentoRepository medicamentoRepository, GrupoMedicamentoRepository grupoMedicamentoRepository,
+			LaboratorioRepository laboratorioRepository) {
+
+		Medicamento medicamento = medicamentoRepository.getById(id);
+		Laboratorio laboratorio = laboratorioRepository.getById(medicamentoConfiguracaoForm.getIdLaboratorio());
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.getById(medicamentoConfiguracaoForm.getIdGrupoMedicamento());
+
+		medicamento.setNome(medicamentoConfiguracaoForm.getNome());
+		medicamento.setLaboratorio(laboratorio);
+		medicamento.setGrupoMedicamento(grupoMedicamento);
+		medicamento.setConcentracaoInicial(medicamentoConfiguracaoForm.getConcentracaoInicial());
+		medicamento.setEmbalagemApresentada(medicamentoConfiguracaoForm.getEmbalagemApresentada());
+		medicamento.setInfoObservacao(medicamentoConfiguracaoForm.getInfoObservacao());
+		medicamento.setInfoSobra(medicamentoConfiguracaoForm.getInfoSobra());
+		medicamento.setInfoTempoAdministracao(medicamentoConfiguracaoForm.getInfoTempoAdministracao());
+		medicamento.setQuantidadeApresentacao(medicamentoConfiguracaoForm.getQuantidadeApresentacao());
+		medicamento.setUnidadeMedida(medicamentoConfiguracaoForm.getUnidadeMedida());
+		return medicamento;
+	}
 
 	public DiluicaoConfiguracao diluicaoFormToDiluicaoConfiguracao(DiluicaoConfiguracaoForm diluicaoConfiguracaoForm,
 			Medicamento medicamento, ViaAdministracao viaAdministracao) {
 		DiluicaoConfiguracao diluicaoConfiguracao = new DiluicaoConfiguracao();
-		diluicaoConfiguracao.setDiluicaoConfiguracaoPK(medicamento, viaAdministracao, diluicaoConfiguracaoForm.getSequencia());
-		//diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
-		//diluicaoConfiguracao.setMedicamento(medicamento);
-		//diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
+		diluicaoConfiguracao.setDiluicaoConfiguracaoPK(medicamento, viaAdministracao,
+				diluicaoConfiguracaoForm.getSequencia());
+		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
+		// diluicaoConfiguracao.setMedicamento(medicamento);
+		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
+		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoForm.getQuantidadeAspirada());
+		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoForm.getQuantidadeAdicionada());
+		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoForm.getConcentracao());
+		diluicaoConfiguracao.setModoPreparo(diluicaoConfiguracaoForm.getModoPreparo());
+		diluicaoConfiguracao.setDiluente(diluicaoConfiguracaoForm.getDiluente());
+		return diluicaoConfiguracao;
+	}
+
+	public DiluicaoConfiguracao diluicaoFormToDiluicaoConfiguracao(
+			DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoForm, Medicamento medicamento,
+			ViaAdministracao viaAdministracao) {
+		DiluicaoConfiguracao diluicaoConfiguracao = new DiluicaoConfiguracao();
+		diluicaoConfiguracao.setDiluicaoConfiguracaoPK(medicamento, viaAdministracao,
+				diluicaoConfiguracaoForm.getSequencia());
+		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
+		// diluicaoConfiguracao.setMedicamento(medicamento);
+		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
 		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoForm.getQuantidadeAspirada());
 		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoForm.getQuantidadeAdicionada());
 		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoForm.getConcentracao());
@@ -79,16 +135,19 @@ public class OperacoesService {
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
 		DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				sequencia);
+
 		
-		DiluicaoConfiguracao diluicaoConfiguracao = diluicaoConfiguracaoRepository.getById(diluicaoConfiguracaoPK);
-		//diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
-		//diluicaoConfiguracao.setMedicamento(medicamento);
-		//diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
+			DiluicaoConfiguracao diluicaoConfiguracao = diluicaoConfiguracaoRepository.getById(diluicaoConfiguracaoPK);
+		
+		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
+		// diluicaoConfiguracao.setMedicamento(medicamento);
+		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
 		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoAtualizarForm.getQuantidadeAspirada());
 		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoAtualizarForm.getQuantidadeAdicionada());
 		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoAtualizarForm.getConcentracao());
 		diluicaoConfiguracao.setModoPreparo(diluicaoConfiguracaoAtualizarForm.getModoPreparo());
 		diluicaoConfiguracao.setDiluente(diluicaoConfiguracaoAtualizarForm.getDiluente());
 		return diluicaoConfiguracao;
+		
 	}
 }

@@ -9,16 +9,24 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
+import br.com.Calculadora.Dto.MedicamentoConfiguracaoDto;
 import br.com.Calculadora.Dto.MedicamentoDto;
-import br.com.Calculadora.Form.MedicamentoForm;
+import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
+import br.com.Calculadora.Form.MedicamentoConfiguracaoForm;
+import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.Repository.LaboratorioRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
+import br.com.Calculadora.Repository.ViaAdministracaoRepository;
+import br.com.Calculadora.orm.DiluicaoConfiguracao;
 import br.com.Calculadora.orm.GrupoMedicamento;
 import br.com.Calculadora.orm.Laboratorio;
 import br.com.Calculadora.orm.Medicamento;
+import br.com.Calculadora.orm.ViaAdministracao;
 
 @Service
 public class MedicamentoService {
@@ -26,13 +34,19 @@ public class MedicamentoService {
 	MedicamentoRepository medicamentoRepository;
 	LaboratorioRepository laboratorioRepository;
 	GrupoMedicamentoRepository grupoMedicamentoRepository;
+	ViaAdministracaoRepository viaAdministracaoRepository;
+	DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository;
 
 	@Autowired
 	public MedicamentoService(MedicamentoRepository medicamentoRepository, LaboratorioRepository laboratorioRepository,
-			GrupoMedicamentoRepository grupoMedicamentoRepository) {
+			GrupoMedicamentoRepository grupoMedicamentoRepository,
+			ViaAdministracaoRepository viaAdministracaoRepository,
+			DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository) {
 		this.medicamentoRepository = medicamentoRepository;
 		this.laboratorioRepository = laboratorioRepository;
 		this.grupoMedicamentoRepository = grupoMedicamentoRepository;
+		this.viaAdministracaoRepository = viaAdministracaoRepository;
+		this.diluicaoConfiguracaoRepository = diluicaoConfiguracaoRepository;
 	}
 
 	// Cruds
@@ -63,22 +77,24 @@ public class MedicamentoService {
 		return ResponseEntity.ok(medicamentoDtoList);
 	}
 
-	public ResponseEntity<MedicamentoDto> criar(MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder) {
-		if ((grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
-				|| (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null)) {
-			throw new RuntimeException();
-		} else {
-			Optional<Laboratorio> laboratorio = laboratorioRepository.findById(medicamentoForm.getIdLaboratorio());
-			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository
-					.findById(medicamentoForm.getIdGrupoMedicamento());
-			Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(medicamentoForm,
-					laboratorio.get(), grupoMedicamento.get());
-			medicamentoRepository.save(medicamento);
-
-			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(medicamento.getId()).toUri();
-			return ResponseEntity.created(uri).body(new MedicamentoDto(medicamento));
-		}
-	}
+	/*
+	 * INSERIR SOMENTE O MEDICAMENTO public ResponseEntity<MedicamentoDto>
+	 * criar(MedicamentoForm medicamentoForm, UriComponentsBuilder uriBuilder) { if
+	 * ((grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()
+	 * ) == null) ||
+	 * (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null))
+	 * { throw new RuntimeException(); } else { Optional<Laboratorio> laboratorio =
+	 * laboratorioRepository.findById(medicamentoForm.getIdLaboratorio());
+	 * Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository
+	 * .findById(medicamentoForm.getIdGrupoMedicamento()); Medicamento medicamento =
+	 * new OperacoesService().medicamentoFormToMedicamento(medicamentoForm,
+	 * laboratorio.get(), grupoMedicamento.get());
+	 * medicamentoRepository.save(medicamento);
+	 * 
+	 * URI uri =
+	 * uriBuilder.path("/criar/{id}").buildAndExpand(medicamento.getId()).toUri();
+	 * return ResponseEntity.created(uri).body(new MedicamentoDto(medicamento)); } }
+	 */
 
 	public ResponseEntity<MedicamentoDto> remover(BigInteger id) {
 		if (!medicamentoRepository.existsById(id)) {
@@ -95,16 +111,91 @@ public class MedicamentoService {
 		}
 	}
 
-	public ResponseEntity<MedicamentoDto> atualizar(BigInteger id, MedicamentoForm medicamentoForm) {
+	/*
+	 * ATUALIZAR SOMENTE UM MEDICAMENTO public ResponseEntity<MedicamentoDto>
+	 * atualizar(BigInteger id, MedicamentoForm medicamentoForm) { if
+	 * (!medicamentoRepository.existsById(id) ||
+	 * (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento())
+	 * == null) ||
+	 * (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null))
+	 * { throw new RuntimeException(); } else { try { Medicamento medicamento = new
+	 * OperacoesService().medicamentoFormToMedicamento(id, medicamentoForm,
+	 * medicamentoRepository, grupoMedicamentoRepository, laboratorioRepository);
+	 * return (ResponseEntity.ok(new MedicamentoDto(medicamento))); } catch
+	 * (RuntimeException exception) { throw exception; } } }
+	 */
+
+	// INSERE O MEDICAMENTO E SUA CONFIGURACAO
+	@Transactional
+	public ResponseEntity<MedicamentoConfiguracaoDto> criar(MedicamentoConfiguracaoForm medicamentoConfiguracaoForm,
+			UriComponentsBuilder uriBuilder) {
+		if ((grupoMedicamentoRepository.findById(medicamentoConfiguracaoForm.getIdGrupoMedicamento()) == null)
+				|| (laboratorioRepository.findById(medicamentoConfiguracaoForm.getIdLaboratorio()) == null)) {
+			throw new RuntimeException();
+		} else {
+			Optional<Laboratorio> laboratorio = laboratorioRepository
+					.findById(medicamentoConfiguracaoForm.getIdLaboratorio());
+			Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository
+					.findById(medicamentoConfiguracaoForm.getIdGrupoMedicamento());
+			Medicamento medicamento = new OperacoesService().medicamentoConfiguracaoFormToMedicamento(
+					medicamentoConfiguracaoForm, laboratorio.get(), grupoMedicamento.get());
+
+			medicamentoRepository.save(medicamento);
+			// BigInteger idMedicamento = medicamento.getId();
+
+			List<DiluicaoConfiguracaoAtualizarForm> diluicaoConfiguracaoFormList = medicamentoConfiguracaoForm
+					.getDiluicaoConfiguracaoList();
+			List<DiluicaoConfiguracaoDto> diluicaoConfiguracaoList = new ArrayList<>();
+			if (!diluicaoConfiguracaoFormList.isEmpty()) {
+				for (DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoForm : diluicaoConfiguracaoFormList) {
+					Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository
+							.findById(diluicaoConfiguracaoForm.getViaAdministracaoId());
+
+					DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService()
+							.diluicaoFormToDiluicaoConfiguracao(diluicaoConfiguracaoForm, medicamento,
+									viaAdministracao.get());
+					diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+					diluicaoConfiguracaoList.add(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));
+				}
+			}
+
+			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(medicamento.getId()).toUri();
+			return ResponseEntity.created(uri)
+					.body(new MedicamentoConfiguracaoDto(medicamento, diluicaoConfiguracaoList));
+		}
+	}
+
+	// ATUALIZA EM MASSA O MEDICAMENTO E SUA CONFIGURACAO
+	@Transactional
+	public ResponseEntity<MedicamentoConfiguracaoDto> atualizar(BigInteger id,
+			MedicamentoConfiguracaoForm medicamentoConfiguracaoForm) {
 		if (!medicamentoRepository.existsById(id)
-				|| (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento()) == null)
-				|| (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null)) {
+				|| (grupoMedicamentoRepository.findById(medicamentoConfiguracaoForm.getIdGrupoMedicamento()) == null)
+				|| (laboratorioRepository.findById(medicamentoConfiguracaoForm.getIdLaboratorio()) == null)) {
 			throw new RuntimeException();
 		} else {
 			try {
-				Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(id, medicamentoForm,
-						medicamentoRepository, grupoMedicamentoRepository, laboratorioRepository);
-				return (ResponseEntity.ok(new MedicamentoDto(medicamento)));
+				Medicamento medicamento = new OperacoesService().medicamentoFormToMedicamento(id,
+						medicamentoConfiguracaoForm, medicamentoRepository, grupoMedicamentoRepository,
+						laboratorioRepository);
+
+				List<DiluicaoConfiguracaoAtualizarForm> diluicaoConfiguracaoFormList = medicamentoConfiguracaoForm
+						.getDiluicaoConfiguracaoList();
+				List<DiluicaoConfiguracaoDto> diluicaoConfiguracaoList = new ArrayList<>();
+				if (!diluicaoConfiguracaoFormList.isEmpty()) {
+					for (DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoForm : diluicaoConfiguracaoFormList) {
+						
+						DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService()
+								.diluicaoAtualizarFormToDiluicao(medicamento.getId(),
+										diluicaoConfiguracaoForm.getViaAdministracaoId(),
+										diluicaoConfiguracaoForm.getSequencia(), diluicaoConfiguracaoForm,
+										medicamentoRepository, viaAdministracaoRepository,
+										diluicaoConfiguracaoRepository);
+						diluicaoConfiguracaoList.add(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));
+
+					}
+				}
+				return (ResponseEntity.ok(new MedicamentoConfiguracaoDto(medicamento, diluicaoConfiguracaoList)));
 			} catch (RuntimeException exception) {
 				throw exception;
 			}
