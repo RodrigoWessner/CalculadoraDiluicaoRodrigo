@@ -12,7 +12,7 @@ public class CalculoForm {
 	public CalculoForm(BigInteger idMedicamento, BigInteger idViaAdministracao, BigDecimal prescricao,
 			String nomeUsuario) {
 		this.idMedicamento = idMedicamento;
-		IdViaAdministracao = idViaAdministracao;
+		this.IdViaAdministracao = idViaAdministracao;
 		this.prescricao = prescricao;
 		this.nomeUsuario = nomeUsuario;
 	}
