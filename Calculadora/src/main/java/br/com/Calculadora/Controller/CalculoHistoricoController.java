@@ -1,5 +1,7 @@
 package br.com.Calculadora.Controller;
 
+import java.math.BigInteger;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +39,8 @@ public class CalculoHistoricoController {
 
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public ResponseEntity<List<HistoricoDto>> lista() {
-		return (calculoHistoricoService.lista());
+	public ResponseEntity<List<HistoricoDto>> lista(@RequestParam BigInteger id, @RequestParam String dataInicio, @RequestParam String dataFim) {
+		return (calculoHistoricoService.lista(id, dataInicio, dataFim));
 	}
 
 }
