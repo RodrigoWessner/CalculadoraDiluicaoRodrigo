@@ -60,7 +60,7 @@ public class LaboratorioController {
 	@ApiOperation(value = "Atualizar Laboratorio")
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<LaboatorioDto> atualizar(@PathVariable BigInteger id, LaboratorioForm laboratorioForm){
+	public ResponseEntity<LaboatorioDto> atualizar(@PathVariable BigInteger id, @RequestBody LaboratorioForm laboratorioForm){
 		return(laboratorioService.atualizar(id, laboratorioForm));
 	}
 

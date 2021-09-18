@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,9 +24,12 @@ import br.com.Calculadora.Form.CalculoForm;
 import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
 import br.com.Calculadora.Repository.HistoricoRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
+import br.com.Calculadora.Repository.ViaAdministracaoRepository;
 import br.com.Calculadora.orm.DiluicaoConfiguracao;
 import br.com.Calculadora.orm.Historico;
+import br.com.Calculadora.orm.Laboratorio;
 import br.com.Calculadora.orm.Medicamento;
+import br.com.Calculadora.orm.ViaAdministracao;
 
 @Service
 public class CalculoHistoricoService {
@@ -32,16 +37,18 @@ public class CalculoHistoricoService {
 	HistoricoRepository historicoRepository;
 	DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository;
 	MedicamentoRepository medicamentoRepository;
+	ViaAdministracaoRepository viaAdministracaoRepository;
 
 	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	@Autowired
 	public CalculoHistoricoService(HistoricoRepository historicoRepository,
-			DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository,
-			MedicamentoRepository medicamentoRepository) {
+			DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository, MedicamentoRepository medicamentoRepository,
+			ViaAdministracaoRepository viaAdministracaoRepository) {
 		this.historicoRepository = historicoRepository;
 		this.diluicaoConfiguracaoRepository = diluicaoConfiguracaoRepository;
 		this.medicamentoRepository = medicamentoRepository;
+		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
 	// metodos
@@ -67,42 +74,24 @@ public class CalculoHistoricoService {
 	}
 
 	public ResponseEntity<HistoricoDto> criar(CalculoForm calculoForm) {
-		BigDecimal volumeTotal = BigDecimal.ZERO;
-		BigDecimal volumeAspirado = BigDecimal.ZERO;
-		BigDecimal volumeDiluente = BigDecimal.ZERO;
-		
 		Optional<Medicamento> medicamento = medicamentoRepository.findById(calculoForm.getIdMedicamento());
-
+		
 		List<DiluicaoConfiguracao> diluicaoConfiguracaoList = diluicaoConfiguracaoRepository
 				.findDiluicaoConfiguracaoIdViaIdMed(calculoForm.getIdMedicamento(),
 						calculoForm.getIdViaAdministracao());
-		/*
-		 * diluicaoConfiguracaoList.forEach(d -> {
-		 * System.out.println(d.getViaAdministracao().getNome()); });
-		 */
-		BigDecimal prescricao = new BigDecimal(String.valueOf(calculoForm.getPrescricao()));
-		BigDecimal apresentacao = new BigDecimal(String.valueOf(medicamento.get().getQuantidadeApresentacao()));
 		
-		//if (diluicaoConfiguracaoList.isEmpty() || diluicaoConfiguracaoList.size() == 1) {
-			/*BigDecimal prescricao = new BigDecimal(String.valueOf(calculoForm.getPrescricao()));
-			BigDecimal presentacao = new BigDecimal(String.valueOf(medicamento.get().getConcentracaoInicial()));
-			volumeAspirado = prescricao.divide(presentacao);
-			*/
-			
-			volumeAspirado = prescricao.divide(apresentacao, MathContext.DECIMAL64);
-			System.out.println(volumeAspirado);
+		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository
+				.findById(calculoForm.getIdViaAdministracao());
 
-			volumeTotal = prescricao.divide(medicamento.get().getConcentracaoInicial(), MathContext.DECIMAL64);
-			System.out.println(volumeTotal);
-		/*}else {
-			volumeAspirado = prescricao.divide(apresentacao);
-			System.out.println("2"+volumeAspirado);
-			volumeTotal = prescricao.divide(diluicaoConfiguracaoList.get(0).getConcentracao());
-			System.out.println("2"+volumeTotal);
-
-		}*/
-		volumeDiluente = volumeAspirado.subtract(volumeTotal);
-		System.out.println(volumeDiluente);
+		BigDecimal prescricao = calculoForm.getPrescricao();
+		BigDecimal resultado = prescricao.divide(medicamento.get().getQuantidadeApresentacao(), MathContext.DECIMAL64);
+		
+		System.out.println(resultado);
+		/*Historico historico = new Historico(calculoForm.getNomeUsuario(), medicamento.get().getNome(),
+				medicamento.get().getQuantidadeApresentacao(), calculoForm.getPrescricao(),
+				viaAdministracao.get().getNome(), "", (Data)'1999-05-08');
+*/
+		
 
 		return ResponseEntity.ok().build();
 	}

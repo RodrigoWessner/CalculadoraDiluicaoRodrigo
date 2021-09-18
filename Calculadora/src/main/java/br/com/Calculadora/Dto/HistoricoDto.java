@@ -18,6 +18,19 @@ public class HistoricoDto {
 	public HistoricoDto() {
 	}
 
+	
+	public HistoricoDto(String nomeUsuario, String nomeMedicamento, String quantidadeApresentada,
+			String quantidadePrescrita, String viaAdministracao, String resultadosJson, Date dataCalculo) {
+		this.nomeUsuario = nomeUsuario;
+		this.nomeMedicamento = nomeMedicamento;
+		this.quantidadeApresentada = quantidadeApresentada;
+		this.quantidadePrescrita = quantidadePrescrita;
+		this.viaAdministracao = viaAdministracao;
+		this.resultadosJson = resultadosJson;
+		this.dataCalculo = dataCalculo;
+	}
+
+
 	public HistoricoDto(Historico historico) {
 		this.id = historico.getId();
 		this.nomeUsuario = historico.getNomeUsuario();
