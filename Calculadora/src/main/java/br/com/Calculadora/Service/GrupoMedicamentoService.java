@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
+import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.orm.GrupoMedicamento;
@@ -31,66 +31,57 @@ public class GrupoMedicamentoService {
 	// Metodos
 	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
 		List<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findAll();
+		if (grupoMedicamento.isEmpty()) {
+			throw new RecordNotFoundException("Não foram encontrados Grupos de Medicamentos");
+		}
 		List<GrupoMedicamentoDto> grupoMedicamentoList = new ArrayList<GrupoMedicamentoDto>();
-
 		grupoMedicamento.forEach(grupo -> {
 			grupoMedicamentoList.add(new GrupoMedicamentoDto(grupo));
 		});
-		return ResponseEntity.ok(grupoMedicamentoList);
+		return new ResponseEntity<>(grupoMedicamentoList, HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> lista(BigInteger id) {
 		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-		GrupoMedicamentoDto grupoMedicamentoDto= new GrupoMedicamentoDto(grupoMedicamento.get());
-		return ResponseEntity.ok(grupoMedicamentoDto);
+		if (!grupoMedicamento.isPresent()) {
+			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
+		}
+		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento.get()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> lista(String nome) {
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nome);
-		GrupoMedicamentoDto grupoMedicamentoDto= new GrupoMedicamentoDto(grupoMedicamento);
-		return ResponseEntity.ok(grupoMedicamentoDto);
+		if (grupoMedicamento == null) {
+			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com nome = " + nome);
+		}
+		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}
 
-	public ResponseEntity<GrupoMedicamentoDto> criar(@Valid GrupoMedicamentoForm grupoMedicamentoForm,
-			UriComponentsBuilder uriBuilder) {// pega info do corpo
-		try {
-			GrupoMedicamento grupoMedicamento = new GrupoMedicamento(grupoMedicamentoForm.getNome());
-			grupoMedicamentoRepository.save(grupoMedicamento);
-
-			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri();
-			return ResponseEntity.created(uri).body(new GrupoMedicamentoDto(grupoMedicamento));
-		} catch (RuntimeException exception) {
-			throw exception;
-		}
+	public ResponseEntity<GrupoMedicamentoDto> criar(GrupoMedicamentoForm grupoMedicamentoForm,
+			UriComponentsBuilder uriBuilder) {
+		GrupoMedicamento grupoMedicamento = new GrupoMedicamento(grupoMedicamentoForm.getNome());
+		grupoMedicamentoRepository.save(grupoMedicamento);
+		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri();
+		return ResponseEntity.created(uri).body(new GrupoMedicamentoDto(grupoMedicamento));
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(BigInteger id, GrupoMedicamentoForm grupoMedicamentoForm) {
-		if (!grupoMedicamentoRepository.existsById(id)) {
-			throw new RuntimeException();
-		} else {
-			try {
-				GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.getById(id);
-				grupoMedicamento.setNome(grupoMedicamentoForm.getNome());
-				return ResponseEntity.ok(new GrupoMedicamentoDto(grupoMedicamento));
-			} catch (RuntimeException exception) {
-				throw exception;
-			}
+		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
+		if (!grupoMedicamento.isPresent()) {
+			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
 		}
+		grupoMedicamento.get().setNome(grupoMedicamentoForm.getNome());
+		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento.get()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> remover(BigInteger id) {
-		if (!grupoMedicamentoRepository.existsById(id)) {
-			throw new RuntimeException();
-		} else {
-			try {
-				Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-				GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
-				grupoMedicamentoRepository.deleteById(id);
-				return (ResponseEntity.ok(grupoMedicamentoDto));
-			} catch (RuntimeException exception) {
-				throw exception;
-			}
+		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
+		if(!grupoMedicamento.isPresent()) {
+			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
 		}
+		GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
+		grupoMedicamentoRepository.deleteById(id);
+		return new ResponseEntity<>(grupoMedicamentoDto, HttpStatus.OK);
 	}
 	/*
 	 * public static List<GrupoMedicamentoDto> converter(List<GrupoMedicamento>

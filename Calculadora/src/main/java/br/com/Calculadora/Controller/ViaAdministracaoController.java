@@ -61,7 +61,7 @@ public class ViaAdministracaoController {
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
 	public ResponseEntity<ViaAdministracaoDTO> atualizar(@PathVariable BigInteger id,
-			ViaAdministracaoForm viaAdministracaoForm) {
+			@RequestBody ViaAdministracaoForm viaAdministracaoForm) {
 		return (viaAdministracaoService.atualizar(id, viaAdministracaoForm));
 	}
 

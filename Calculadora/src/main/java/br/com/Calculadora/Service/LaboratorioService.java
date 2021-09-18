@@ -64,12 +64,12 @@ public class LaboratorioService {
 	}
 
 	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm) {
-		Laboratorio laboratorio = laboratorioRepository.getById(id);
-		if (laboratorio == null) {
+		Optional<Laboratorio> laboratorio = laboratorioRepository.findById(id);
+		if (!laboratorio.isPresent()) {
 			throw new RecordNotFoundException("Não encontrado Laboratorio com o id = " + id);
 		}
-		laboratorio.setNome(laboratorioForm.getNome());
-		return new ResponseEntity<>(new LaboatorioDto(laboratorio), HttpStatus.OK);
+		laboratorio.get().setNome(laboratorioForm.getNome());
+		return new ResponseEntity<>(new LaboatorioDto(laboratorio.get()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<LaboatorioDto> remover(BigInteger id) {

@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ public class GrupoMedicamentoController {
 
 	@ApiOperation(value = "Insere nome Grupo_Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
-	public ResponseEntity<GrupoMedicamentoDto> criar(@RequestBody @Valid GrupoMedicamentoForm grupoMedicamentoForm,
+	public ResponseEntity<GrupoMedicamentoDto> criar(@RequestBody  GrupoMedicamentoForm grupoMedicamentoForm,
 			UriComponentsBuilder uriBuilder) {// pega info do corpo
 		return grupoMedicamentoService.criar(grupoMedicamentoForm, uriBuilder);
 	}
@@ -63,7 +62,7 @@ public class GrupoMedicamentoController {
 	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	@Transactional
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(@PathVariable BigInteger id,
-			@Valid GrupoMedicamentoForm grupoMedicamentoForm) {
+			@RequestBody GrupoMedicamentoForm grupoMedicamentoForm) {
 		return (grupoMedicamentoService.atualizar(id, grupoMedicamentoForm));
 	}
 
