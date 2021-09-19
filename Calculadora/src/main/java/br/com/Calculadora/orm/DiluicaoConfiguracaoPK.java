@@ -10,6 +10,11 @@ import javax.persistence.ManyToOne;
 @Embeddable
 public class DiluicaoConfiguracaoPK implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private Medicamento medicamento;
 
@@ -25,7 +30,6 @@ public class DiluicaoConfiguracaoPK implements Serializable {
 	}
 
 	public DiluicaoConfiguracaoPK() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setMedicamento(Medicamento medicamento) {

@@ -54,9 +54,9 @@ public class DiluicaoConfiguracaoController {
 	}
 
 	@ApiOperation(value = "Atualizar Diluição Configuração")
-	@RequestMapping(value = "/atualizar/{medicamentoId}_{viaAdministracaoId}_{sequencia}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/atualizar/{medicamentoId}/{viaAdministracaoId}/{sequencia}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(@PathVariable BigInteger medicamentoId, @PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia, DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
+	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(@PathVariable BigInteger medicamentoId, @PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia, @RequestBody DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
 		return (diluicaoConfiguracaoService.atualizar(medicamentoId,viaAdministracaoId,sequencia, diluicaoConfiguracaoAtualizarForm));
 	}
 

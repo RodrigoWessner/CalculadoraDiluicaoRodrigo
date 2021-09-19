@@ -62,6 +62,7 @@ public class MedicamentoController {
 
 	@ApiOperation(value = "Criar Medicamento")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
+	@Transactional
 	public ResponseEntity<MedicamentoConfiguracaoDto> criar(@RequestBody MedicamentoConfiguracaoForm medicamentoConfiguracaoForm,
 			UriComponentsBuilder uriBuilder) {
 		return medicamentoService.criar(medicamentoConfiguracaoForm, uriBuilder);

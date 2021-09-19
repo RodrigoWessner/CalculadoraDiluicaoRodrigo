@@ -7,25 +7,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
-import br.com.Calculadora.Dto.MedicamentoDto;
+import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
-import br.com.Calculadora.Form.MedicamentoForm;
 import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
-import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
-import br.com.Calculadora.Repository.LaboratorioRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
 import br.com.Calculadora.Repository.ViaAdministracaoRepository;
 import br.com.Calculadora.orm.DiluicaoConfiguracao;
 import br.com.Calculadora.orm.DiluicaoConfiguracaoPK;
-import br.com.Calculadora.orm.GrupoMedicamento;
-import br.com.Calculadora.orm.Laboratorio;
 import br.com.Calculadora.orm.Medicamento;
 import br.com.Calculadora.orm.ViaAdministracao;
 
@@ -44,38 +39,37 @@ public class DiluicaoConfiguracaoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	// Cruds
-
 	public ResponseEntity<List<DiluicaoConfiguracaoDto>> lista() {
 		List<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository.findAll();
+		if (diluicaoConfiguracao.isEmpty()) {
+			throw new RecordNotFoundException("Não foram encontrados Diluições Configurações");
+		}
 		List<DiluicaoConfiguracaoDto> diluicaoList = new ArrayList<DiluicaoConfiguracaoDto>();
-
 		diluicaoConfiguracao.forEach(diluicao -> {
 			diluicaoList.add(new DiluicaoConfiguracaoDto(diluicao));
 		});
-
-		return ResponseEntity.ok(diluicaoList);
+		return new ResponseEntity<>(diluicaoList, HttpStatus.OK);
 	}
 
 	public ResponseEntity<DiluicaoConfiguracaoDto> criar(DiluicaoConfiguracaoForm diluicaoConfiguracaoForm,
 			UriComponentsBuilder uriBuilder) {
-		if ((medicamentoRepository.findById(diluicaoConfiguracaoForm.getMedicamentoId()) == null)
-				|| (viaAdministracaoRepository.findById(diluicaoConfiguracaoForm.getViaAdministracaoId()) == null)) {
-			throw new RuntimeException();
-		} else {
-			Optional<Medicamento> medicamento = medicamentoRepository
-					.findById(diluicaoConfiguracaoForm.getMedicamentoId());
-			Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository
-					.findById(diluicaoConfiguracaoForm.getViaAdministracaoId());
-
-			DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService().diluicaoFormToDiluicaoConfiguracao(
-					diluicaoConfiguracaoForm, medicamento.get(), viaAdministracao.get());
-			diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
-
-			URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(diluicaoConfiguracao.getDiluicaoConfiguracaoPK())
-					.toUri();
-			return ResponseEntity.created(uri).body(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));
+		BigInteger medicamentoId = diluicaoConfiguracaoForm.getMedicamentoId();
+		Optional<Medicamento> medicamento = medicamentoRepository.findById(medicamentoId);
+		if (medicamento == null) {
+			throw new RecordNotFoundException("Não foi encontrado o Medicamento com o id = " + medicamentoId);
 		}
+		BigInteger viaAdministracaoId = diluicaoConfiguracaoForm.getViaAdministracaoId();
+		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(viaAdministracaoId);
+		if (viaAdministracao == null) {
+			throw new RecordNotFoundException(
+					"Não foi encontrado o Via de Administração com o id = " + viaAdministracaoId);
+		}
+		DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService().diluicaoFormToDiluicaoConfiguracao(
+				diluicaoConfiguracaoForm, medicamento.get(), viaAdministracao.get());
+		diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(diluicaoConfiguracao.getDiluicaoConfiguracaoPK())
+				.toUri();
+		return ResponseEntity.created(uri).body(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));
 	}
 
 	public ResponseEntity<DiluicaoConfiguracaoDto> remover(BigInteger medicamentoId, BigInteger viaAdministracaoId,
@@ -84,42 +78,31 @@ public class DiluicaoConfiguracaoService {
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
 		DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				sequencia);
-
-		if (!diluicaoConfiguracaoRepository.existsById(diluicaoConfiguracaoPK)) {
-			throw new RuntimeException();
-		} else {
-			try {
-				Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository
-						.findById(diluicaoConfiguracaoPK);
-				DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(
-						diluicaoConfiguracao.get());
-				diluicaoConfiguracaoRepository.deleteById(diluicaoConfiguracaoPK);
-				return (ResponseEntity.ok(diluicaoConfiguracaoDto));
-			} catch (RuntimeException exception) {
-				throw exception;
-			}
+		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository
+				.findById(diluicaoConfiguracaoPK);
+		if (!diluicaoConfiguracao.isPresent()) {
+			throw new RecordNotFoundException(
+					"Não foi encontrado o Diluição Configuração com o id = " + viaAdministracaoId.toString());
 		}
+		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(diluicaoConfiguracao.get());
+		diluicaoConfiguracaoRepository.deleteById(diluicaoConfiguracaoPK);
+		return new ResponseEntity<>(diluicaoConfiguracaoDto, HttpStatus.OK);
 	}
 
 	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(BigInteger medicamentoId, BigInteger viaAdministracaoId,
 			BigInteger sequencia, DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
+		Medicamento medicamento = medicamentoRepository.getById(medicamentoId);
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
 		
-
-		/*
-		 * if (!diluicaoConfiguracaoRepository.existsById(diluicaoConfiguracaoPK) ||
-		 * (grupoMedicamentoRepository.findById(medicamentoForm.getIdGrupoMedicamento())
-		 * == null) ||
-		 * (laboratorioRepository.findById(medicamentoForm.getIdLaboratorio()) == null))
-		 * { throw new RuntimeException(); } else {
-		 */
-		try {
-			DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService().diluicaoAtualizarFormToDiluicao(
-					medicamentoId, viaAdministracaoId, sequencia, diluicaoConfiguracaoAtualizarForm, medicamentoRepository,
-					viaAdministracaoRepository, diluicaoConfiguracaoRepository);
-			return (ResponseEntity.ok(new DiluicaoConfiguracaoDto(diluicaoConfiguracao)));
-		} catch (RuntimeException exception) {
-			throw exception;
+		DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao,
+				sequencia);
+		
+		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository.findById(diluicaoConfiguracaoPK);
+		if (!diluicaoConfiguracao.isPresent()) {
+			throw new RecordNotFoundException("Não foi encontrado Diluicao Configuração com o id = " + diluicaoConfiguracao.get().toString());
 		}
-
+		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(new OperacoesService()
+				.diluicaoAtualizarFormToDiluicao(diluicaoConfiguracao.get(), diluicaoConfiguracaoAtualizarForm));
+		return new ResponseEntity<>(diluicaoConfiguracaoDto, HttpStatus.OK);
 	}
 }
