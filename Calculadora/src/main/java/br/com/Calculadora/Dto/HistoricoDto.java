@@ -35,7 +35,7 @@ public class HistoricoDto {
 		this.id = historico.getId();
 		this.nomeUsuario = historico.getNomeUsuario();
 		this.nomeMedicamento = historico.getNomeMedicamento();
-		this.quantidadeApresentada = historico.getQuantidadeApresentada();
+		this.quantidadeApresentada = historico.getQuantidadeApresentacao();
 		this.quantidadePrescrita = historico.getQuantidadePrescrita();
 		this.viaAdministracao = historico.getViaAdministracao();
 		this.resultadosJson = historico.getResultadosJson();

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
-import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
+import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarSemPKForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
 import br.com.Calculadora.Service.DiluicaoConfiguracaoService;
 import io.swagger.annotations.Api;
@@ -47,17 +47,21 @@ public class DiluicaoConfiguracaoController {
 	}
 
 	@ApiOperation(value = "Deletar Diluição Configuração")
-	@RequestMapping(value = "/remover/{medicamentoId}_{viaAdministracaoId}_{sequencia}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/remover/{medicamentoId}/{viaAdministracaoId}/{sequencia}", method = RequestMethod.DELETE)
 	@Transactional
-	public ResponseEntity<DiluicaoConfiguracaoDto> deletar(@PathVariable BigInteger medicamentoId, @PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia) {
-		return diluicaoConfiguracaoService.remover(medicamentoId,viaAdministracaoId,sequencia);
+	public ResponseEntity<DiluicaoConfiguracaoDto> deletar(@PathVariable BigInteger medicamentoId,
+			@PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia) {
+		return diluicaoConfiguracaoService.remover(medicamentoId, viaAdministracaoId, sequencia);
 	}
 
 	@ApiOperation(value = "Atualizar Diluição Configuração")
 	@RequestMapping(value = "/atualizar/{medicamentoId}/{viaAdministracaoId}/{sequencia}", method = RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(@PathVariable BigInteger medicamentoId, @PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia, @RequestBody DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
-		return (diluicaoConfiguracaoService.atualizar(medicamentoId,viaAdministracaoId,sequencia, diluicaoConfiguracaoAtualizarForm));
+	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(@PathVariable BigInteger medicamentoId,
+			@PathVariable BigInteger viaAdministracaoId, @PathVariable BigInteger sequencia,
+			@RequestBody DiluicaoConfiguracaoAtualizarSemPKForm diluicaoConfiguracaoAtualizarSemPKForm) {
+		return (diluicaoConfiguracaoService.atualizar(medicamentoId, viaAdministracaoId, sequencia,
+				diluicaoConfiguracaoAtualizarSemPKForm));
 	}
 
 }

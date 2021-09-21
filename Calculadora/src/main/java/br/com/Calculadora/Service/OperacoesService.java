@@ -3,16 +3,14 @@ package br.com.Calculadora.Service;
 import java.math.BigInteger;
 
 import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
+import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarSemPKForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
 import br.com.Calculadora.Form.MedicamentoConfiguracaoForm;
 import br.com.Calculadora.Form.MedicamentoForm;
-import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
 import br.com.Calculadora.Repository.LaboratorioRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
-import br.com.Calculadora.Repository.ViaAdministracaoRepository;
 import br.com.Calculadora.orm.DiluicaoConfiguracao;
-import br.com.Calculadora.orm.DiluicaoConfiguracaoPK;
 import br.com.Calculadora.orm.GrupoMedicamento;
 import br.com.Calculadora.orm.Laboratorio;
 import br.com.Calculadora.orm.Medicamento;
@@ -143,5 +141,15 @@ public class OperacoesService {
 		diluicaoConfiguracao.setDiluente(diluicaoConfiguracaoAtualizarForm.getDiluente());
 		return diluicaoConfiguracao;
 
+	}
+	
+	public DiluicaoConfiguracao diluicaoAtualizarSemPKFormToDiluicao(DiluicaoConfiguracao diluicaoConfiguracao,
+			DiluicaoConfiguracaoAtualizarSemPKForm diluicaoConfiguracaoAtualizarSemPKForm) {
+		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoAtualizarSemPKForm.getQuantidadeAspirada());
+		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoAtualizarSemPKForm.getQuantidadeAdicionada());
+		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoAtualizarSemPKForm.getConcentracao());
+		diluicaoConfiguracao.setModoPreparo(diluicaoConfiguracaoAtualizarSemPKForm.getModoPreparo());
+		diluicaoConfiguracao.setDiluente(diluicaoConfiguracaoAtualizarSemPKForm.getDiluente());
+		return diluicaoConfiguracao;
 	}
 }

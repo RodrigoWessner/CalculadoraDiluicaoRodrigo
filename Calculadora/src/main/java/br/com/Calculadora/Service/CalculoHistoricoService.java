@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.Calculadora.Dto.CalculoDto;
 import br.com.Calculadora.Dto.HistoricoDto;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.CalculoForm;
@@ -64,7 +65,7 @@ public class CalculoHistoricoService {
 		return new ResponseEntity<>(historicoDtoList, HttpStatus.OK);
 	}
 
-	public ResponseEntity<HistoricoDto> criar(CalculoForm calculoForm) {
+	public ResponseEntity<CalculoDto> criar(CalculoForm calculoForm) {
 		BigInteger idMedicamento = calculoForm.getIdMedicamento();
 		BigInteger idViaAdministracao = calculoForm.getIdViaAdministracao();
 		Optional<Medicamento> medicamento = medicamentoRepository.findById(idMedicamento);
@@ -75,22 +76,37 @@ public class CalculoHistoricoService {
 		if (!viaAdministracao.isPresent()) {
 			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + idViaAdministracao);
 		}
-		
+
+		BigDecimal resultado = calculoForm.getPrescricao().divide(medicamento.get().getQuantidadeApresentacao(), MathContext.DECIMAL64);
+
+		Historico historico = new Historico(medicamento.get().getId(), calculoForm.getNomeUsuario(),
+				medicamento.get().getNome(), String.valueOf(medicamento.get().getQuantidadeApresentacao()),
+				String.valueOf(calculoForm.getPrescricao()), viaAdministracao.get().getNome(), "", null);
+		historicoRepository.save(historico);
+
 		List<DiluicaoConfiguracao> diluicaoConfiguracaoList = diluicaoConfiguracaoRepository
 				.findDiluicaoConfiguracaoIdViaIdMed(idMedicamento, idViaAdministracao);
+		List<String> passosAdministracao = new ArrayList<>();
+		if (!diluicaoConfiguracaoList.isEmpty()) {
+			System.out.print("fakflamffmkmKMFMkmkmfL");
+			diluicaoConfiguracaoList.forEach(diluicao -> {
+				passosAdministracao.add(diluicao.getModoPreparo());
+			});
+		}
+		passosAdministracao.forEach(System.out::println);
 
-		BigDecimal prescricao = calculoForm.getPrescricao();
-		BigDecimal resultado = prescricao.divide(medicamento.get().getQuantidadeApresentacao(), MathContext.DECIMAL64);
-
-		System.out.println(resultado);
-		/*
-		 * Historico historico = new Historico(calculoForm.getNomeUsuario(),
-		 * medicamento.get().getNome(), medicamento.get().getQuantidadeApresentacao(),
-		 * calculoForm.getPrescricao(), viaAdministracao.get().getNome(), "",
-		 * (Data)'1999-05-08');
-		 */
-
-		return ResponseEntity.ok().build();
+		List<String> informacoes = new ArrayList<>();
+		if (medicamento.get().getInfoObservacao() == "") {
+			informacoes.add(medicamento.get().getInfoObservacao());
+		}
+		if (medicamento.get().getInfoTempoAdministracao() == "") {
+			informacoes.add(medicamento.get().getInfoTempoAdministracao());
+		}
+		if (medicamento.get().getInfoSobra() == "") {
+			informacoes.add(medicamento.get().getInfoSobra());
+		}
+		CalculoDto calculoDto = new CalculoDto(String.valueOf(resultado), passosAdministracao, informacoes);
+		return new ResponseEntity<>(calculoDto, HttpStatus.OK);
 	}
 
 }

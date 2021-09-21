@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.Calculadora.Dto.CalculoDto;
 import br.com.Calculadora.Dto.HistoricoDto;
 import br.com.Calculadora.Form.CalculoForm;
 import br.com.Calculadora.Service.CalculoHistoricoService;
@@ -31,8 +32,8 @@ public class CalculoHistoricoController {
 
 	@ApiOperation(value = "Realiza o calculo de diluicao")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
-	public ResponseEntity<HistoricoDto> criar(@RequestBody CalculoForm calculoForm) {
-		return (calculoHistoricoService.criar(calculoForm));
+	public ResponseEntity<CalculoDto> criar(@RequestBody CalculoForm calculoForm) {
+		return (calculoHistoricoService.criar(calculoForm)); 
 	}
 
 	@ApiOperation(value = "Retorna lista da base")

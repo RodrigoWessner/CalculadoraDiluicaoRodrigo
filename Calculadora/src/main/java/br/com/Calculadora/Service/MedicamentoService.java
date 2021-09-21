@@ -66,8 +66,10 @@ public class MedicamentoService {
 
 	public ResponseEntity<MedicamentoDto> lista(BigInteger id) {
 		Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
-		MedicamentoDto medicamentoDto = new MedicamentoDto(medicamento.get());
-		return ResponseEntity.ok(medicamentoDto);
+		if (!medicamento.isPresent()) {
+			throw new RecordNotFoundException("Não foi encontrado Medicamento com id = " + id);
+		}
+		return new ResponseEntity<>(new MedicamentoDto(medicamento.get()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<List<MedicamentoDto>> lista(String nome) {

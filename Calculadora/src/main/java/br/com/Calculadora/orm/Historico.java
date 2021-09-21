@@ -19,7 +19,7 @@ public class Historico {
 
 	private String nomeUsuario;
 	private String nomeMedicamento;
-	private String quantidadeApresentada;
+	private String quantidadeApresentacao;
 	private String quantidadePrescrita;
 	private String viaAdministracao;
 	private String resultadosJson;
@@ -32,12 +32,12 @@ public class Historico {
 	public Historico() {
 	}
 
-	public Historico(BigInteger id, String nomeUsuario, String nomeMedicamento, String quantidadeApresentada,
+	public Historico(BigInteger id, String nomeUsuario, String nomeMedicamento, String quantidadeApresentacao,
 			String quantidadePrescrita, String viaAdministracao, String resultadosJson, Date dataCalculo) {
 		this.id = id;
 		this.nomeUsuario = nomeUsuario;
 		this.nomeMedicamento = nomeMedicamento;
-		this.quantidadeApresentada = quantidadeApresentada;
+		this.quantidadeApresentacao = quantidadeApresentacao;
 		this.quantidadePrescrita = quantidadePrescrita;
 		this.viaAdministracao = viaAdministracao;
 		this.resultadosJson = resultadosJson;
@@ -64,12 +64,12 @@ public class Historico {
 		this.nomeMedicamento = nomeMedicamento;
 	}
 
-	public String getQuantidadeApresentada() {
-		return quantidadeApresentada;
+	public String getQuantidadeApresentacao() {
+		return quantidadeApresentacao;
 	}
 
-	public void setQuantidadeApresentada(String quantidadeApresentada) {
-		this.quantidadeApresentada = quantidadeApresentada;
+	public void setQuantidadeApresentacao(String quantidadeApresentacao) {
+		this.quantidadeApresentacao = quantidadeApresentacao;
 	}
 
 	public String getQuantidadePrescrita() {

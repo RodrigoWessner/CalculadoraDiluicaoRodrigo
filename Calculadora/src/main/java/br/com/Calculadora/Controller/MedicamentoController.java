@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,13 +44,13 @@ public class MedicamentoController {
 
 	@ApiOperation(value = "Retorna entidade do id")
 	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
-	public ResponseEntity<MedicamentoDto> lista(@PathVariable BigInteger id) {
+	public ResponseEntity<MedicamentoDto> lista(@RequestParam BigInteger id) {
 		return (medicamentoService.lista(id));
 	}
 
 	@ApiOperation(value = "Retorna entidade do nome")
 	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
-	public ResponseEntity<List<MedicamentoDto>> lista(@PathVariable String nome) {
+	public ResponseEntity<List<MedicamentoDto>> lista(@RequestParam String nome) {
 		return (medicamentoService.lista(nome));
 	}
 

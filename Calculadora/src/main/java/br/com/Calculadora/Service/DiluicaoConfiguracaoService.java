@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
-import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
+import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarSemPKForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
 import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
 import br.com.Calculadora.Repository.MedicamentoRepository;
@@ -90,7 +90,7 @@ public class DiluicaoConfiguracaoService {
 	}
 
 	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(BigInteger medicamentoId, BigInteger viaAdministracaoId,
-			BigInteger sequencia, DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
+			BigInteger sequencia, DiluicaoConfiguracaoAtualizarSemPKForm diluicaoConfiguracaoAtualizarSemPKForm) {
 		Medicamento medicamento = medicamentoRepository.getById(medicamentoId);
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
 		
@@ -102,7 +102,7 @@ public class DiluicaoConfiguracaoService {
 			throw new RecordNotFoundException("Não foi encontrado Diluicao Configuração com o id = " + diluicaoConfiguracao.get().toString());
 		}
 		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(new OperacoesService()
-				.diluicaoAtualizarFormToDiluicao(diluicaoConfiguracao.get(), diluicaoConfiguracaoAtualizarForm));
+				.diluicaoAtualizarSemPKFormToDiluicao(diluicaoConfiguracao.get(), diluicaoConfiguracaoAtualizarSemPKForm));
 		return new ResponseEntity<>(diluicaoConfiguracaoDto, HttpStatus.OK);
 	}
 }
