@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.LaboatorioDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.LaboratorioForm;
 import br.com.Calculadora.Repository.LaboratorioRepository;
@@ -56,7 +58,7 @@ public class LaboratorioService {
 		return new ResponseEntity<>(new LaboatorioDto(laboratorio), HttpStatus.OK);
 	}
 
-	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder){
 		Laboratorio laboratorio = new Laboratorio(laboratorioForm.getNome());
 		laboratorioRepository.save(laboratorio);
 		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(laboratorio.getId()).toUri();

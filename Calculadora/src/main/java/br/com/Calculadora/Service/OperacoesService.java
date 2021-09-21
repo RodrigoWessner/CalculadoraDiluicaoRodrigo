@@ -33,7 +33,7 @@ public class OperacoesService {
 		return medicamento;
 	}
 
-	public Medicamento medicamentoFormToMedicamento(MedicamentoForm medicamentoForm, Laboratorio laboratorio,
+	/*public Medicamento medicamentoFormToMedicamento(MedicamentoForm medicamentoForm, Laboratorio laboratorio,
 			GrupoMedicamento grupoMedicamento) {
 		Medicamento medicamento = new Medicamento();
 		medicamento.setNome(medicamentoForm.getNome());
@@ -48,8 +48,8 @@ public class OperacoesService {
 		medicamento.setUnidadeMedida(medicamentoForm.getUnidadeMedida());
 		return medicamento;
 	}
-
-	public Medicamento medicamentoFormToMedicamento(BigInteger id, MedicamentoForm medicamentoForm,
+*/
+	/*public Medicamento medicamentoFormToMedicamento(BigInteger id, MedicamentoForm medicamentoForm,
 			MedicamentoRepository medicamentoRepository, GrupoMedicamentoRepository grupoMedicamentoRepository,
 			LaboratorioRepository laboratorioRepository) {
 
@@ -69,7 +69,7 @@ public class OperacoesService {
 		medicamento.setUnidadeMedida(medicamentoForm.getUnidadeMedida());
 		return medicamento;
 	}
-
+*/
 	public Medicamento medicamentoFormToMedicamento(Medicamento medicamento, Laboratorio laboratorio,
 			GrupoMedicamento grupoMedicamento, MedicamentoConfiguracaoForm medicamentoConfiguracaoForm) {
 		medicamento.setNome(medicamentoConfiguracaoForm.getNome());
@@ -90,9 +90,6 @@ public class OperacoesService {
 		DiluicaoConfiguracao diluicaoConfiguracao = new DiluicaoConfiguracao();
 		diluicaoConfiguracao.setDiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				diluicaoConfiguracaoForm.getSequencia());
-		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
-		// diluicaoConfiguracao.setMedicamento(medicamento);
-		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
 		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoForm.getQuantidadeAspirada());
 		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoForm.getQuantidadeAdicionada());
 		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoForm.getConcentracao());
@@ -107,9 +104,6 @@ public class OperacoesService {
 		DiluicaoConfiguracao diluicaoConfiguracao = new DiluicaoConfiguracao();
 		diluicaoConfiguracao.setDiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				diluicaoConfiguracaoForm.getSequencia());
-		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
-		// diluicaoConfiguracao.setMedicamento(medicamento);
-		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
 		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoForm.getQuantidadeAspirada());
 		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoForm.getQuantidadeAdicionada());
 		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoForm.getConcentracao());
@@ -120,20 +114,6 @@ public class OperacoesService {
 
 	public DiluicaoConfiguracao diluicaoAtualizarFormToDiluicao(DiluicaoConfiguracao diluicaoConfiguracao,
 			DiluicaoConfiguracaoAtualizarForm diluicaoConfiguracaoAtualizarForm) {
-		/*
-		 * Medicamento medicamento = medicamentoRepository.getById(medicamentoId);
-		 * ViaAdministracao viaAdministracao =
-		 * viaAdministracaoRepository.getById(viaAdministracaoId);
-		 * DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new
-		 * DiluicaoConfiguracaoPK(medicamento, viaAdministracao, sequencia);
-		 * 
-		 * 
-		 * DiluicaoConfiguracao diluicaoConfiguracao =
-		 * diluicaoConfiguracaoRepository.getById(diluicaoConfiguracaoPK);
-		 */
-		// diluicaoConfiguracao.setSequencia(diluicaoConfiguracaoForm.getSequencia());
-		// diluicaoConfiguracao.setMedicamento(medicamento);
-		// diluicaoConfiguracao.setViaAdministracao(viaAdministracao);
 		diluicaoConfiguracao.setQuantidadeAspirada(diluicaoConfiguracaoAtualizarForm.getQuantidadeAspirada());
 		diluicaoConfiguracao.setQuantidadeAdicionada(diluicaoConfiguracaoAtualizarForm.getQuantidadeAdicionada());
 		diluicaoConfiguracao.setConcentracao(diluicaoConfiguracaoAtualizarForm.getConcentracao());

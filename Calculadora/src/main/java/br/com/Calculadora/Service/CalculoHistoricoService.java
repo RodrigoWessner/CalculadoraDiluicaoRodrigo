@@ -3,6 +3,7 @@ package br.com.Calculadora.Service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import br.com.Calculadora.orm.DiluicaoConfiguracao;
 import br.com.Calculadora.orm.Historico;
 import br.com.Calculadora.orm.Medicamento;
 import br.com.Calculadora.orm.ViaAdministracao;
+
 
 @Service
 public class CalculoHistoricoService {
@@ -77,32 +79,33 @@ public class CalculoHistoricoService {
 			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + idViaAdministracao);
 		}
 
-		BigDecimal resultado = calculoForm.getPrescricao().divide(medicamento.get().getQuantidadeApresentacao(), MathContext.DECIMAL64);
+		BigDecimal resultado = calculoForm.getPrescricao().divide(medicamento.get().getQuantidadeApresentacao(),
+				MathContext.DECIMAL64);
 
+		Date data = Date.valueOf(LocalDate.now());
+		
 		Historico historico = new Historico(medicamento.get().getId(), calculoForm.getNomeUsuario(),
 				medicamento.get().getNome(), String.valueOf(medicamento.get().getQuantidadeApresentacao()),
-				String.valueOf(calculoForm.getPrescricao()), viaAdministracao.get().getNome(), "", null);
+				String.valueOf(calculoForm.getPrescricao()), viaAdministracao.get().getNome(), "", data);
 		historicoRepository.save(historico);
 
 		List<DiluicaoConfiguracao> diluicaoConfiguracaoList = diluicaoConfiguracaoRepository
 				.findDiluicaoConfiguracaoIdViaIdMed(idMedicamento, idViaAdministracao);
 		List<String> passosAdministracao = new ArrayList<>();
 		if (!diluicaoConfiguracaoList.isEmpty()) {
-			System.out.print("fakflamffmkmKMFMkmkmfL");
 			diluicaoConfiguracaoList.forEach(diluicao -> {
 				passosAdministracao.add(diluicao.getModoPreparo());
 			});
 		}
-		passosAdministracao.forEach(System.out::println);
 
 		List<String> informacoes = new ArrayList<>();
-		if (medicamento.get().getInfoObservacao() == "") {
+		if (medicamento.get().getInfoObservacao() != "") {
 			informacoes.add(medicamento.get().getInfoObservacao());
 		}
-		if (medicamento.get().getInfoTempoAdministracao() == "") {
+		if (medicamento.get().getInfoTempoAdministracao() != "") {
 			informacoes.add(medicamento.get().getInfoTempoAdministracao());
 		}
-		if (medicamento.get().getInfoSobra() == "") {
+		if (medicamento.get().getInfoSobra() != "") {
 			informacoes.add(medicamento.get().getInfoSobra());
 		}
 		CalculoDto calculoDto = new CalculoDto(String.valueOf(resultado), passosAdministracao, informacoes);

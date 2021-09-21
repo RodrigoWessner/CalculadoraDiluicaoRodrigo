@@ -82,7 +82,7 @@ public class DiluicaoConfiguracaoService {
 				.findById(diluicaoConfiguracaoPK);
 		if (!diluicaoConfiguracao.isPresent()) {
 			throw new RecordNotFoundException(
-					"Não foi encontrado o Diluição Configuração com o id = " + viaAdministracaoId.toString());
+					"Não foi encontrado o Diluição Configuração com o id = " + diluicaoConfiguracao.toString());
 		}
 		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(diluicaoConfiguracao.get());
 		diluicaoConfiguracaoRepository.deleteById(diluicaoConfiguracaoPK);
@@ -92,11 +92,15 @@ public class DiluicaoConfiguracaoService {
 	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(BigInteger medicamentoId, BigInteger viaAdministracaoId,
 			BigInteger sequencia, DiluicaoConfiguracaoAtualizarSemPKForm diluicaoConfiguracaoAtualizarSemPKForm) {
 		Medicamento medicamento = medicamentoRepository.getById(medicamentoId);
+		if(medicamento == null) {
+			throw new RecordNotFoundException("Não foi encontrado Medicamento com o id = " + medicamentoId);
+		}
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
-		
+		if(viaAdministracao == null) {
+			throw new RecordNotFoundException("Não foi encontrado Via de Administração com o id = " + viaAdministracaoId);
+		}
 		DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				sequencia);
-		
 		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository.findById(diluicaoConfiguracaoPK);
 		if (!diluicaoConfiguracao.isPresent()) {
 			throw new RecordNotFoundException("Não foi encontrado Diluicao Configuração com o id = " + diluicaoConfiguracao.get().toString());

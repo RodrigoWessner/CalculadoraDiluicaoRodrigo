@@ -12,12 +12,13 @@ public class ExceptionController {
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public DefaultErrorDto resourceNotFoundException(RecordNotFoundException ex, WebRequest request) {
 		DefaultErrorDto message = new DefaultErrorDto(ex.getMessage());
-		
-		/*
-		 * ErrorMessage message = new ErrorMessage( HttpStatus.NOT_FOUND.value(), new
-		 * Date(), ex.getMessage(), request.getDescription(false));
-		 */
-
+		return message;
+	}
+	
+	@ExceptionHandler(DuplicateValueException.class)
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public DefaultErrorDto dupicatedValueException(DuplicateValueException ex, WebRequest request) {
+		DefaultErrorDto message = new DefaultErrorDto(ex.getMessage());
 		return message;
 	}
 }

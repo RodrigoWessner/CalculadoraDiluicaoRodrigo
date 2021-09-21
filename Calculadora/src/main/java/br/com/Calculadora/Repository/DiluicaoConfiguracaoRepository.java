@@ -14,7 +14,8 @@ import br.com.Calculadora.orm.DiluicaoConfiguracaoPK;
 public interface DiluicaoConfiguracaoRepository extends JpaRepository<DiluicaoConfiguracao, DiluicaoConfiguracaoPK>{
 	@Query(value = "select * from diluicao_configuracao dc "
 			+ "where dc.medicamento_id = :idMedicamento "
-			+ "and dc.via_administracao_id = :idViaAdministracao",
+			+ "and dc.via_administracao_id = :idViaAdministracao "
+			+ "order by sequencia",
 			nativeQuery = true)
 	List<DiluicaoConfiguracao> findDiluicaoConfiguracaoIdViaIdMed(BigInteger idMedicamento, BigInteger idViaAdministracao);
 	
