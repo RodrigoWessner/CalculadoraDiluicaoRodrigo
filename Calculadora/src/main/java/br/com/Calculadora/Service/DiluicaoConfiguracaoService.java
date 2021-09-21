@@ -40,12 +40,12 @@ public class DiluicaoConfiguracaoService {
 	}
 
 	public ResponseEntity<List<DiluicaoConfiguracaoDto>> lista() {
-		List<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository.findAll();
-		if (diluicaoConfiguracao.isEmpty()) {
-			throw new RecordNotFoundException("Não foram encontrados Diluições Configurações");
-		}
+		Optional<List<DiluicaoConfiguracao>> diluicaoConfiguracao = Optional
+				.ofNullable(diluicaoConfiguracaoRepository.findAll());
+		diluicaoConfiguracao
+				.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Diluções Configurações"));
 		List<DiluicaoConfiguracaoDto> diluicaoList = new ArrayList<DiluicaoConfiguracaoDto>();
-		diluicaoConfiguracao.forEach(diluicao -> {
+		diluicaoConfiguracao.get().forEach(diluicao -> {
 			diluicaoList.add(new DiluicaoConfiguracaoDto(diluicao));
 		});
 		return new ResponseEntity<>(diluicaoList, HttpStatus.OK);
@@ -54,18 +54,14 @@ public class DiluicaoConfiguracaoService {
 	public ResponseEntity<DiluicaoConfiguracaoDto> criar(DiluicaoConfiguracaoForm diluicaoConfiguracaoForm,
 			UriComponentsBuilder uriBuilder) {
 		BigInteger medicamentoId = diluicaoConfiguracaoForm.getMedicamentoId();
-		Optional<Medicamento> medicamento = medicamentoRepository.findById(medicamentoId);
-		if (medicamento == null) {
-			throw new RecordNotFoundException("Não foi encontrado o Medicamento com o id = " + medicamentoId);
-		}
+		Medicamento medicamento = medicamentoRepository.findById(medicamentoId)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + medicamentoId));
 		BigInteger viaAdministracaoId = diluicaoConfiguracaoForm.getViaAdministracaoId();
-		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(viaAdministracaoId);
-		if (viaAdministracao == null) {
-			throw new RecordNotFoundException(
-					"Não foi encontrado o Via de Administração com o id = " + viaAdministracaoId);
-		}
-		DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService().diluicaoFormToDiluicaoConfiguracao(
-				diluicaoConfiguracaoForm, medicamento.get(), viaAdministracao.get());
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(viaAdministracaoId)
+				.orElseThrow(() -> new RecordNotFoundException(
+						"Não foi encontrado o Via de Administração com o id = " + viaAdministracaoId));
+		DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService()
+				.diluicaoFormToDiluicaoConfiguracao(diluicaoConfiguracaoForm, medicamento, viaAdministracao);
 		diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
 		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(diluicaoConfiguracao.getDiluicaoConfiguracaoPK())
 				.toUri();
@@ -80,10 +76,8 @@ public class DiluicaoConfiguracaoService {
 				sequencia);
 		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository
 				.findById(diluicaoConfiguracaoPK);
-		if (!diluicaoConfiguracao.isPresent()) {
-			throw new RecordNotFoundException(
-					"Não foi encontrado o Diluição Configuração com o id = " + diluicaoConfiguracao.toString());
-		}
+		diluicaoConfiguracao.orElseThrow(() -> new RecordNotFoundException(
+				"Não foi encontrado o Diluição Configuração com o id = " + diluicaoConfiguracao.toString()));
 		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(diluicaoConfiguracao.get());
 		diluicaoConfiguracaoRepository.deleteById(diluicaoConfiguracaoPK);
 		return new ResponseEntity<>(diluicaoConfiguracaoDto, HttpStatus.OK);
@@ -91,22 +85,20 @@ public class DiluicaoConfiguracaoService {
 
 	public ResponseEntity<DiluicaoConfiguracaoDto> atualizar(BigInteger medicamentoId, BigInteger viaAdministracaoId,
 			BigInteger sequencia, DiluicaoConfiguracaoAtualizarSemPKForm diluicaoConfiguracaoAtualizarSemPKForm) {
-		Medicamento medicamento = medicamentoRepository.getById(medicamentoId);
-		if(medicamento == null) {
-			throw new RecordNotFoundException("Não foi encontrado Medicamento com o id = " + medicamentoId);
-		}
-		ViaAdministracao viaAdministracao = viaAdministracaoRepository.getById(viaAdministracaoId);
-		if(viaAdministracao == null) {
-			throw new RecordNotFoundException("Não foi encontrado Via de Administração com o id = " + viaAdministracaoId);
-		}
+		Medicamento medicamento = medicamentoRepository.findById(medicamentoId)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + medicamentoId));
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(viaAdministracaoId)
+				.orElseThrow(() -> new RecordNotFoundException(
+						"Não foi encontrado o Via de Administração com o id = " + viaAdministracaoId));
 		DiluicaoConfiguracaoPK diluicaoConfiguracaoPK = new DiluicaoConfiguracaoPK(medicamento, viaAdministracao,
 				sequencia);
-		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository.findById(diluicaoConfiguracaoPK);
-		if (!diluicaoConfiguracao.isPresent()) {
-			throw new RecordNotFoundException("Não foi encontrado Diluicao Configuração com o id = " + diluicaoConfiguracao.get().toString());
-		}
-		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(new OperacoesService()
-				.diluicaoAtualizarSemPKFormToDiluicao(diluicaoConfiguracao.get(), diluicaoConfiguracaoAtualizarSemPKForm));
+		Optional<DiluicaoConfiguracao> diluicaoConfiguracao = diluicaoConfiguracaoRepository
+				.findById(diluicaoConfiguracaoPK);
+		diluicaoConfiguracao.orElseThrow(() -> new RecordNotFoundException(
+				"Não foi encontrado Diluicao Configuração com o id = " + diluicaoConfiguracao.get().toString()));
+		DiluicaoConfiguracaoDto diluicaoConfiguracaoDto = new DiluicaoConfiguracaoDto(
+				new OperacoesService().diluicaoAtualizarSemPKFormToDiluicao(diluicaoConfiguracao.get(),
+						diluicaoConfiguracaoAtualizarSemPKForm));
 		return new ResponseEntity<>(diluicaoConfiguracaoDto, HttpStatus.OK);
 	}
 }

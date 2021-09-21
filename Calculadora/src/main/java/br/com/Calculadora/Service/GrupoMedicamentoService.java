@@ -28,32 +28,27 @@ public class GrupoMedicamentoService {
 		this.grupoMedicamentoRepository = grupoMedicamentoRepository;
 	}
 
-	// Metodos
 	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
-		List<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findAll();
-		if (grupoMedicamento.isEmpty()) {
-			throw new RecordNotFoundException("Não foram encontrados Grupos de Medicamentos");
-		}
+		Optional<List<GrupoMedicamento>> grupoMedicamento = Optional.ofNullable(grupoMedicamentoRepository.findAll());
+		grupoMedicamento.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Grupos de Medicamentos"));
 		List<GrupoMedicamentoDto> grupoMedicamentoList = new ArrayList<GrupoMedicamentoDto>();
-		grupoMedicamento.forEach(grupo -> {
+		grupoMedicamento.get().forEach(grupo -> {
 			grupoMedicamentoList.add(new GrupoMedicamentoDto(grupo));
 		});
 		return new ResponseEntity<>(grupoMedicamentoList, HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> lista(BigInteger id) {
-		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-		if (!grupoMedicamento.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
-		}
-		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento.get()), HttpStatus.OK);
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));
+		;
+		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> lista(String nome) {
-		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nome);
-		if (grupoMedicamento == null) {
-			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com nome = " + nome);
-		}
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nome).orElseThrow(
+				() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com nome = " + nome));
+		;
 		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}
 
@@ -66,20 +61,18 @@ public class GrupoMedicamentoService {
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(BigInteger id, GrupoMedicamentoForm grupoMedicamentoForm) {
-		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-		if (!grupoMedicamento.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
-		}
-		grupoMedicamento.get().setNome(grupoMedicamentoForm.getNome());
-		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento.get()), HttpStatus.OK);
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));
+		;
+		grupoMedicamento.setNome(grupoMedicamentoForm.getNome());
+		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> remover(BigInteger id) {
-		Optional<GrupoMedicamento> grupoMedicamento = grupoMedicamentoRepository.findById(id);
-		if(!grupoMedicamento.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id);
-		}
-		GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento.get());
+		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));
+		;
+		GrupoMedicamentoDto grupoMedicamentoDto = new GrupoMedicamentoDto(grupoMedicamento);
 		grupoMedicamentoRepository.deleteById(id);
 		return new ResponseEntity<>(grupoMedicamentoDto, HttpStatus.OK);
 	}

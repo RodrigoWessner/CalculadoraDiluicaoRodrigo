@@ -17,6 +17,6 @@ public interface DiluicaoConfiguracaoRepository extends JpaRepository<DiluicaoCo
 			+ "and dc.via_administracao_id = :idViaAdministracao "
 			+ "order by sequencia",
 			nativeQuery = true)
-	List<DiluicaoConfiguracao> findDiluicaoConfiguracaoIdViaIdMed(BigInteger idMedicamento, BigInteger idViaAdministracao);
+	List<DiluicaoConfiguracao> findDiluicaoConfiguracaoIdViaIdMed(BigInteger idMedicamento, BigInteger idViaAdministracao);//method query
 	
 }

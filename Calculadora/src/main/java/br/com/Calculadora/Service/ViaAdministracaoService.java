@@ -28,32 +28,25 @@ public class ViaAdministracaoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	// metodos
 	public ResponseEntity<List<ViaAdministracaoDTO>> lista() {
-		List<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findAll();
-		if (viaAdministracao == null) {
-			throw new RecordNotFoundException("Não foram encontrados Vias de Administração");
-		}
+		Optional<List<ViaAdministracao>> viaAdministracao = Optional.ofNullable(viaAdministracaoRepository.findAll());
+		viaAdministracao.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Vias de Administração"));
 		List<ViaAdministracaoDTO> viaAdministracaoList = new ArrayList<ViaAdministracaoDTO>();
-		viaAdministracao.forEach(via -> {
+		viaAdministracao.get().forEach(via -> {
 			viaAdministracaoList.add(new ViaAdministracaoDTO(via));
 		});
 		return new ResponseEntity<>(viaAdministracaoList, HttpStatus.OK);
 	}
 
 	public ResponseEntity<ViaAdministracaoDTO> lista(BigInteger id) {
-		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(id);
-		if (!viaAdministracao.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + id);
-		}
-		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao.get()), HttpStatus.OK);
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Via de Administração com id = " + id));
+		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ViaAdministracaoDTO> lista(String nome) {
-		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findByNome(nome);
-		if (viaAdministracao == null) {
-			throw new RecordNotFoundException("Não encontrado Via de Administração com o nome = " + nome);
-		}
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findByNome(nome).orElseThrow(
+				() -> new RecordNotFoundException("Não encontrado Via de Administração com nome = " + nome));
 		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao), HttpStatus.OK);
 	}
 
@@ -66,20 +59,16 @@ public class ViaAdministracaoService {
 	}
 
 	public ResponseEntity<ViaAdministracaoDTO> atualizar(BigInteger id, ViaAdministracaoForm viaAdministracaoForm) {
-		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(id);
-		if (!viaAdministracao.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + id);
-		}
-		viaAdministracao.get().setNome(viaAdministracaoForm.getNome());
-		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao.get()), HttpStatus.OK);
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Via de Administração com id = " + id));
+		viaAdministracao.setNome(viaAdministracaoForm.getNome());
+		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ViaAdministracaoDTO> remover(BigInteger id) {
-		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(id);
-		if (!viaAdministracao.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + id);
-		}
-		ViaAdministracaoDTO viaAdministracaoDto = new ViaAdministracaoDTO(viaAdministracao.get());
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Via de Administração com id = " + id));
+		ViaAdministracaoDTO viaAdministracaoDto = new ViaAdministracaoDTO(viaAdministracao);
 		viaAdministracaoRepository.deleteById(id);
 		return new ResponseEntity<>(viaAdministracaoDto, HttpStatus.OK);
 	}

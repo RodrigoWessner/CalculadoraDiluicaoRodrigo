@@ -50,7 +50,7 @@ public class CalculoHistoricoService {
 	}
 
 	// metodos
-	public ResponseEntity<List<HistoricoDto>> lista(BigInteger id, String dataInicio, String dataFim) {
+	public ResponseEntity<List<HistoricoDto>> lista(BigInteger id, String dataInicio, String dataFim) {//localdate
 		List<HistoricoDto> historicoDtoList = new ArrayList<HistoricoDto>();
 		LocalDate dataInicial = LocalDate.parse(dataInicio, formatter);
 		LocalDate dataFinal = LocalDate.parse(dataFim, formatter);

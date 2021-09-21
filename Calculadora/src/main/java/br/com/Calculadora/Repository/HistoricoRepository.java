@@ -15,5 +15,5 @@ public interface HistoricoRepository extends JpaRepository<Historico, BigInteger
 	@Query(value = "select * from historico "
 			+ "where nome_medicamento = :nome "
 			+ "and data_calculo between :dataInicio and :dataFim", nativeQuery = true)
-	List<Historico> findByNomeAndBetweenDatas(String nome, LocalDate dataInicio, LocalDate dataFim);
+	List<Historico> findByNomeAndBetweenDatas(String nome, LocalDate dataInicio, LocalDate dataFim);//method query
 }
