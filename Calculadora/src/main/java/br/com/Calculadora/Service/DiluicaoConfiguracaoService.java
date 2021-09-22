@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarSemPKForm;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoForm;
@@ -62,7 +63,12 @@ public class DiluicaoConfiguracaoService {
 						"Não foi encontrado o Via de Administração com o id = " + viaAdministracaoId));
 		DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService()
 				.diluicaoFormToDiluicaoConfiguracao(diluicaoConfiguracaoForm, medicamento, viaAdministracao);
-		diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+		try {
+			diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+		} catch (RuntimeException e) {
+			throw new DuplicateValueException(
+					"Não foi possível inserir a Diluição Configuração = " + diluicaoConfiguracao.toString());
+		}
 		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(diluicaoConfiguracao.getDiluicaoConfiguracaoPK())
 				.toUri();
 		return ResponseEntity.created(uri).body(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));

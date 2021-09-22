@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.LaboatorioDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.LaboratorioForm;
 import br.com.Calculadora.Repository.LaboratorioRepository;
@@ -52,7 +53,11 @@ public class LaboratorioService {
 
 	public ResponseEntity<LaboatorioDto> criar(LaboratorioForm laboratorioForm, UriComponentsBuilder uriBuilder) {
 		Laboratorio laboratorio = new Laboratorio(laboratorioForm.getNome());
-		laboratorioRepository.save(laboratorio);
+		try {
+			laboratorioRepository.save(laboratorio);
+		} catch (RuntimeException e) {
+			throw new DuplicateValueException("O Laboratório " + laboratorioForm.getNome() + " já está armazenado");
+		}
 		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(laboratorio.getId()).toUri();
 		return ResponseEntity.created(uri).body(new LaboatorioDto(laboratorio));
 	}
@@ -60,6 +65,9 @@ public class LaboratorioService {
 	public ResponseEntity<LaboatorioDto> atualizar(BigInteger id, LaboratorioForm laboratorioForm) {
 		Laboratorio laboratorio = laboratorioRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Laboratorio com id = " + id));
+		if (laboratorioRepository.findByNome(laboratorioForm.getNome()).isPresent()) {
+			throw new DuplicateValueException("O Laboratório " + laboratorioForm.getNome() + " já existe");
+		}
 		laboratorio.setNome(laboratorioForm.getNome());
 		return new ResponseEntity<>(new LaboatorioDto(laboratorio), HttpStatus.OK);
 	}

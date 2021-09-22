@@ -22,6 +22,7 @@ public class Historico {
 	private String quantidadeApresentacao;
 	private String quantidadePrescrita;
 	private String viaAdministracao;
+	@Column(length = 400)
 	private String resultadosJson;
 	private Date dataCalculo;
 

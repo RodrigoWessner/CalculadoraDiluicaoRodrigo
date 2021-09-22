@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.GrupoMedicamentoDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.GrupoMedicamentoForm;
 import br.com.Calculadora.Repository.GrupoMedicamentoRepository;
@@ -28,7 +29,7 @@ public class GrupoMedicamentoService {
 		this.grupoMedicamentoRepository = grupoMedicamentoRepository;
 	}
 
-	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
+	public ResponseEntity<List<GrupoMedicamentoDto>> listar() {
 		Optional<List<GrupoMedicamento>> grupoMedicamento = Optional.ofNullable(grupoMedicamentoRepository.findAll());
 		grupoMedicamento.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Grupos de Medicamentos"));
 		List<GrupoMedicamentoDto> grupoMedicamentoList = new ArrayList<GrupoMedicamentoDto>();
@@ -38,14 +39,14 @@ public class GrupoMedicamentoService {
 		return new ResponseEntity<>(grupoMedicamentoList, HttpStatus.OK);
 	}
 
-	public ResponseEntity<GrupoMedicamentoDto> lista(BigInteger id) {
+	public ResponseEntity<GrupoMedicamentoDto> listar(BigInteger id) {
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));
 		;
 		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}
 
-	public ResponseEntity<GrupoMedicamentoDto> lista(String nome) {
+	public ResponseEntity<GrupoMedicamentoDto> listar(String nome) {
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findByNome(nome).orElseThrow(
 				() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com nome = " + nome));
 		;
@@ -55,15 +56,23 @@ public class GrupoMedicamentoService {
 	public ResponseEntity<GrupoMedicamentoDto> criar(GrupoMedicamentoForm grupoMedicamentoForm,
 			UriComponentsBuilder uriBuilder) {
 		GrupoMedicamento grupoMedicamento = new GrupoMedicamento(grupoMedicamentoForm.getNome());
-		grupoMedicamentoRepository.save(grupoMedicamento);
+		try {
+			grupoMedicamentoRepository.save(grupoMedicamento);
+		} catch (RuntimeException e) {
+			throw new DuplicateValueException(
+					"O Grupo de Medicamento " + grupoMedicamento.getNome() + " já está armazenado");
+		}
 		URI uri = uriBuilder.path("/criar/{id}").buildAndExpand(grupoMedicamento.getId()).toUri();
 		return ResponseEntity.created(uri).body(new GrupoMedicamentoDto(grupoMedicamento));
 	}
 
 	public ResponseEntity<GrupoMedicamentoDto> atualizar(BigInteger id, GrupoMedicamentoForm grupoMedicamentoForm) {
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(id)
-				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));
-		;
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + id));;
+		if (grupoMedicamentoRepository.findByNome(grupoMedicamentoForm.getNome()).isPresent()) {
+			throw new DuplicateValueException(
+					"O Grupo de Medicamento " + grupoMedicamentoForm.getNome() + " já existe");
+		}
 		grupoMedicamento.setNome(grupoMedicamentoForm.getNome());
 		return new ResponseEntity<>(new GrupoMedicamentoDto(grupoMedicamento), HttpStatus.OK);
 	}

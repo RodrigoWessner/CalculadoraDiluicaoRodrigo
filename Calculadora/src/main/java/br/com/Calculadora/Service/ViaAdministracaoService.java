@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.Calculadora.Dto.ViaAdministracaoDTO;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.ViaAdministracaoForm;
 import br.com.Calculadora.Repository.ViaAdministracaoRepository;

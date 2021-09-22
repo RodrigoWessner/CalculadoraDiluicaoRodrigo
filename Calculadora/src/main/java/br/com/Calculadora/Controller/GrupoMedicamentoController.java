@@ -35,20 +35,20 @@ public class GrupoMedicamentoController {
 
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public ResponseEntity<List<GrupoMedicamentoDto>> lista() {
-		return grupoMedicamentoService.lista();
+	public ResponseEntity<List<GrupoMedicamentoDto>> listar() {
+		return grupoMedicamentoService.listar();
 	}
 	
 	@ApiOperation(value = "Retorna entidade do id")
 	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
-	public ResponseEntity<GrupoMedicamentoDto> lista(@RequestParam BigInteger id){
-		return(grupoMedicamentoService.lista(id));
+	public ResponseEntity<GrupoMedicamentoDto> listar(@RequestParam BigInteger id){
+		return(grupoMedicamentoService.listar(id));
 	}
 	
 	@ApiOperation(value = "Retorna entidade do nome")
 	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
-	public ResponseEntity<GrupoMedicamentoDto> lista(@RequestParam String nome){
-		return(grupoMedicamentoService.lista(nome));
+	public ResponseEntity<GrupoMedicamentoDto> listar(@RequestParam String nome){
+		return(grupoMedicamentoService.listar(nome));
 	}
 
 	@ApiOperation(value = "Insere nome Grupo_Medicamento")

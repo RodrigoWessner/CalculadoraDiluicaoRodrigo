@@ -1,6 +1,7 @@
 package br.com.Calculadora.Controller;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,13 @@ public class CalculoHistoricoController {
 	@ApiOperation(value = "Realiza o calculo de diluicao")
 	@RequestMapping(value = "/criar", method = RequestMethod.POST)
 	public ResponseEntity<CalculoDto> criar(@RequestBody CalculoForm calculoForm) {
-		return (calculoHistoricoService.criar(calculoForm)); 
+		return (calculoHistoricoService.criar(calculoForm));
 	}
 
-	@ApiOperation(value = "Retorna lista da base")
+	@ApiOperation(value = "Retorna lista da base") 
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public ResponseEntity<List<HistoricoDto>> lista(@RequestParam BigInteger id, @RequestParam String dataInicio,
-			@RequestParam String dataFim) {
+	public ResponseEntity<List<HistoricoDto>> lista(@RequestParam BigInteger id, @RequestParam Date dataInicio,
+			@RequestParam Date dataFim) {
 		return (calculoHistoricoService.lista(id, dataInicio, dataFim));
 	}
 

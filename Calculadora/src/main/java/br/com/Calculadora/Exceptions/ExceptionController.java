@@ -16,7 +16,7 @@ public class ExceptionController {
 	}
 
 	@ExceptionHandler(DuplicateValueException.class)
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public DefaultErrorDto dupicatedValueException(DuplicateValueException ex, WebRequest request) {
 		DefaultErrorDto message = new DefaultErrorDto(ex.getMessage());
 		return message;

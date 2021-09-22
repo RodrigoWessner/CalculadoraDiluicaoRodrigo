@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.Calculadora.Dto.DiluicaoConfiguracaoDto;
 import br.com.Calculadora.Dto.MedicamentoConfiguracaoDto;
 import br.com.Calculadora.Dto.MedicamentoDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.DiluicaoConfiguracaoAtualizarForm;
 import br.com.Calculadora.Form.MedicamentoConfiguracaoForm;
@@ -110,7 +111,12 @@ public class MedicamentoService {
 								+ diluicaoConfiguracaoForm.getViaAdministracaoId()));
 				DiluicaoConfiguracao diluicaoConfiguracao = new OperacoesService()
 						.diluicaoFormToDiluicaoConfiguracao(diluicaoConfiguracaoForm, medicamento, viaAdministracao);
-				diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+				try {
+					diluicaoConfiguracaoRepository.save(diluicaoConfiguracao);
+				} catch (RuntimeException e) {
+					throw new DuplicateValueException(
+							"Não foi possível inserir a Diluição Configuração = " + diluicaoConfiguracao.toString());
+				}
 				diluicaoConfiguracaoList.add(new DiluicaoConfiguracaoDto(diluicaoConfiguracao));
 			}
 		}
@@ -127,7 +133,8 @@ public class MedicamentoService {
 		Laboratorio laboratorio = laboratorioRepository.findById(idLaboratorio)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Laboratorio com id = " + idLaboratorio));
 		GrupoMedicamento grupoMedicamento = grupoMedicamentoRepository.findById(idGrupoMedicamento)
-				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Grupo de Medicamento com id = " + idGrupoMedicamento));
+				.orElseThrow(() -> new RecordNotFoundException(
+						"Não encontrado Grupo de Medicamento com id = " + idGrupoMedicamento));
 		medicamento = new OperacoesService().medicamentoFormToMedicamento(medicamento, laboratorio, grupoMedicamento,
 				medicamentoConfiguracaoForm);
 		List<DiluicaoConfiguracaoAtualizarForm> diluicaoConfiguracaoFormList = medicamentoConfiguracaoForm

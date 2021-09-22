@@ -5,10 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.Calculadora.Dto.CalculoDto;
 import br.com.Calculadora.Dto.HistoricoDto;
+import br.com.Calculadora.Exceptions.DuplicateValueException;
 import br.com.Calculadora.Exceptions.RecordNotFoundException;
 import br.com.Calculadora.Form.CalculoForm;
 import br.com.Calculadora.Repository.DiluicaoConfiguracaoRepository;
@@ -28,7 +27,6 @@ import br.com.Calculadora.orm.Historico;
 import br.com.Calculadora.orm.Medicamento;
 import br.com.Calculadora.orm.ViaAdministracao;
 
-
 @Service
 public class CalculoHistoricoService {
 
@@ -36,8 +34,6 @@ public class CalculoHistoricoService {
 	DiluicaoConfiguracaoRepository diluicaoConfiguracaoRepository;
 	MedicamentoRepository medicamentoRepository;
 	ViaAdministracaoRepository viaAdministracaoRepository;
-
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	@Autowired
 	public CalculoHistoricoService(HistoricoRepository historicoRepository,
@@ -49,18 +45,14 @@ public class CalculoHistoricoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	// metodos
-	public ResponseEntity<List<HistoricoDto>> lista(BigInteger id, String dataInicio, String dataFim) {//localdate
+	public ResponseEntity<List<HistoricoDto>> lista(BigInteger id, Date dataInicio, Date dataFim) {// localdate
 		List<HistoricoDto> historicoDtoList = new ArrayList<HistoricoDto>();
-		LocalDate dataInicial = LocalDate.parse(dataInicio, formatter);
-		LocalDate dataFinal = LocalDate.parse(dataFim, formatter);
-		Optional<Medicamento> medicamento = medicamentoRepository.findById(id);
-		if (!medicamento.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Medicamento com o id = " + id);
-		}
-		String nomeMedicamento = medicamento.get().getNome();
-		List<Historico> historico = historicoRepository.findByNomeAndBetweenDatas(nomeMedicamento, dataInicial,
-				dataFinal);
+		// LocalDate dataInicial = LocalDate.parse(dataInicio, formatter);
+		// LocalDate dataFinal = LocalDate.parse(dataFim, formatter);
+		Medicamento medicamento = medicamentoRepository.findById(id)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + id));
+		String nomeMedicamento = medicamento.getNome();
+		List<Historico> historico = historicoRepository.findByNomeMedicamentoAndDataCalculoBetween(nomeMedicamento, dataInicio, dataFim);
 		historico.forEach(his -> {
 			historicoDtoList.add(new HistoricoDto(his));
 		});
@@ -70,44 +62,54 @@ public class CalculoHistoricoService {
 	public ResponseEntity<CalculoDto> criar(CalculoForm calculoForm) {
 		BigInteger idMedicamento = calculoForm.getIdMedicamento();
 		BigInteger idViaAdministracao = calculoForm.getIdViaAdministracao();
-		Optional<Medicamento> medicamento = medicamentoRepository.findById(idMedicamento);
-		if (!medicamento.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Medicamento com o id = " + idMedicamento);
-		}
-		Optional<ViaAdministracao> viaAdministracao = viaAdministracaoRepository.findById(idViaAdministracao);
-		if (!viaAdministracao.isPresent()) {
-			throw new RecordNotFoundException("Não encontrado Via de Administração com o id = " + idViaAdministracao);
-		}
+		Date data = Date.valueOf(LocalDate.now());
+		String resultadoJson = "";
+		BigDecimal resultado = BigDecimal.ZERO;
 
-		BigDecimal resultado = calculoForm.getPrescricao().divide(medicamento.get().getQuantidadeApresentacao(),
+		Medicamento medicamento = medicamentoRepository.findById(idMedicamento)
+				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + idMedicamento));
+
+		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(idViaAdministracao)
+				.orElseThrow(() -> new RecordNotFoundException(
+						"Não encontrado Via de Administração com o id = " + idViaAdministracao));
+
+		resultado = calculoForm.getPrescricao().divide(medicamento.getQuantidadeApresentacao(),
 				MathContext.DECIMAL64);
 
-		Date data = Date.valueOf(LocalDate.now());
-		
-		Historico historico = new Historico(medicamento.get().getId(), calculoForm.getNomeUsuario(),
-				medicamento.get().getNome(), String.valueOf(medicamento.get().getQuantidadeApresentacao()),
-				String.valueOf(calculoForm.getPrescricao()), viaAdministracao.get().getNome(), "", data);
-		historicoRepository.save(historico);
-
 		List<DiluicaoConfiguracao> diluicaoConfiguracaoList = diluicaoConfiguracaoRepository
-				.findDiluicaoConfiguracaoIdViaIdMed(idMedicamento, idViaAdministracao);
+			.findByDiluicaoConfiguracaoPKMedicamentoIdAndDiluicaoConfiguracaoPKViaAdministracaoId(idMedicamento, idViaAdministracao);
+		System.out.println("4444444");
+
 		List<String> passosAdministracao = new ArrayList<>();
 		if (!diluicaoConfiguracaoList.isEmpty()) {
+			resultadoJson.concat("\nPassos: ");
 			diluicaoConfiguracaoList.forEach(diluicao -> {
+				resultadoJson.concat("Sequencia " + diluicao.getSequencia() + ": " + diluicao.getModoPreparo() + "\n");
 				passosAdministracao.add(diluicao.getModoPreparo());
 			});
 		}
 
 		List<String> informacoes = new ArrayList<>();
-		if (medicamento.get().getInfoObservacao() != "") {
-			informacoes.add(medicamento.get().getInfoObservacao());
+		if (medicamento.getInfoObservacao() != "") {
+			informacoes.add(medicamento.getInfoObservacao());
 		}
-		if (medicamento.get().getInfoTempoAdministracao() != "") {
-			informacoes.add(medicamento.get().getInfoTempoAdministracao());
+		if (medicamento.getInfoTempoAdministracao() != "") {
+			informacoes.add(medicamento.getInfoTempoAdministracao());
 		}
-		if (medicamento.get().getInfoSobra() != "") {
-			informacoes.add(medicamento.get().getInfoSobra());
+		if (medicamento.getInfoSobra() != "") {
+			informacoes.add(medicamento.getInfoSobra());
 		}
+
+		Historico historico = new Historico(medicamento.getId(), calculoForm.getNomeUsuario(), medicamento.getNome(),
+				String.valueOf(medicamento.getQuantidadeApresentacao()), String.valueOf(calculoForm.getPrescricao()),
+				viaAdministracao.getNome(), resultadoJson, data);
+
+		try {
+			historicoRepository.save(historico);
+		} catch (RuntimeException e) {
+			throw new DuplicateValueException("Não foi possível armazenar o calculo no Histórico");
+		}
+
 		CalculoDto calculoDto = new CalculoDto(String.valueOf(resultado), passosAdministracao, informacoes);
 		return new ResponseEntity<>(calculoDto, HttpStatus.OK);
 	}
