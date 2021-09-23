@@ -29,7 +29,7 @@ public class LaboratorioService {
 		this.laboratorioRepository = laboratorioRepository;
 	}
 
-	public ResponseEntity<List<LaboatorioDto>> lista() {
+	public ResponseEntity<List<LaboatorioDto>> listar() {
 		Optional<List<Laboratorio>> laboratorio = Optional.ofNullable(laboratorioRepository.findAll());
 		laboratorio.orElseThrow(() -> new RecordNotFoundException("Não foi encontrado nenhum Laboratorio"));
 		List<LaboatorioDto> laboratorioDtoList = new ArrayList<LaboatorioDto>();
@@ -39,13 +39,13 @@ public class LaboratorioService {
 		return new ResponseEntity<>(laboratorioDtoList, HttpStatus.OK);
 	}
 
-	public ResponseEntity<LaboatorioDto> lista(BigInteger id) {
+	public ResponseEntity<LaboatorioDto> listar(BigInteger id) {
 		Laboratorio laboratorio = laboratorioRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Laboratorio com id = " + id));
 		return new ResponseEntity<>(new LaboatorioDto(laboratorio), HttpStatus.OK);
 	}
 
-	public ResponseEntity<LaboatorioDto> lista(String nome) {
+	public ResponseEntity<LaboatorioDto> listar(String nome) {
 		Laboratorio laboratorio = laboratorioRepository.findByNome(nome)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Laboratorio com nome = " + nome));
 		return new ResponseEntity<>(new LaboatorioDto(laboratorio), HttpStatus.OK);

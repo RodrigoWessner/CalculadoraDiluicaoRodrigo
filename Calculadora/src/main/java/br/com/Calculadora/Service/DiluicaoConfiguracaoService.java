@@ -40,7 +40,7 @@ public class DiluicaoConfiguracaoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	public ResponseEntity<List<DiluicaoConfiguracaoDto>> lista() {
+	public ResponseEntity<List<DiluicaoConfiguracaoDto>> listar() {
 		Optional<List<DiluicaoConfiguracao>> diluicaoConfiguracao = Optional
 				.ofNullable(diluicaoConfiguracaoRepository.findAll());
 		diluicaoConfiguracao

@@ -52,7 +52,7 @@ public class MedicamentoService {
 		this.diluicaoConfiguracaoRepository = diluicaoConfiguracaoRepository;
 	}
 
-	public ResponseEntity<List<MedicamentoDto>> lista() {
+	public ResponseEntity<List<MedicamentoDto>> listar() {
 		Optional<List<Medicamento>> medicamento = Optional.ofNullable(medicamentoRepository.findAll());
 		medicamento.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Medicamentos"));
 		List<MedicamentoDto> MedicamentoDtoList = new ArrayList<MedicamentoDto>();
@@ -62,13 +62,13 @@ public class MedicamentoService {
 		return new ResponseEntity<>(MedicamentoDtoList, HttpStatus.OK);
 	}
 
-	public ResponseEntity<MedicamentoDto> lista(BigInteger id) {
+	public ResponseEntity<MedicamentoDto> listar(BigInteger id) {
 		Medicamento medicamento = medicamentoRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + id));
 		return new ResponseEntity<>(new MedicamentoDto(medicamento), HttpStatus.OK);
 	}
 
-	public ResponseEntity<List<MedicamentoDto>> lista(String nome) {
+	public ResponseEntity<List<MedicamentoDto>> listar(String nome) {
 		Optional<List<Medicamento>> medicamentoList = Optional.ofNullable(medicamentoRepository.findByNome(nome));
 		medicamentoList.orElseThrow(
 				() -> new RecordNotFoundException("Não foram encontrados Medicamentos com o nome = " + nome));

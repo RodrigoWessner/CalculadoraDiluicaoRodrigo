@@ -35,8 +35,8 @@ public class DiluicaoConfiguracaoController {
 
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	@ApiOperation(value = "Listar Diluição Configuração")
-	public ResponseEntity<List<DiluicaoConfiguracaoDto>> lista() {
-		return (diluicaoConfiguracaoService.lista());
+	public ResponseEntity<List<DiluicaoConfiguracaoDto>> listar() {
+		return (diluicaoConfiguracaoService.listar());
 	}
 
 	@ApiOperation(value = "Criar Diluição Configuração")

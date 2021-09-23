@@ -29,7 +29,7 @@ public class ViaAdministracaoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	public ResponseEntity<List<ViaAdministracaoDTO>> lista() {
+	public ResponseEntity<List<ViaAdministracaoDTO>> listar() {
 		Optional<List<ViaAdministracao>> viaAdministracao = Optional.ofNullable(viaAdministracaoRepository.findAll());
 		viaAdministracao.orElseThrow(() -> new RecordNotFoundException("Não foram encontrados Vias de Administração"));
 		List<ViaAdministracaoDTO> viaAdministracaoList = new ArrayList<ViaAdministracaoDTO>();
@@ -39,13 +39,13 @@ public class ViaAdministracaoService {
 		return new ResponseEntity<>(viaAdministracaoList, HttpStatus.OK);
 	}
 
-	public ResponseEntity<ViaAdministracaoDTO> lista(BigInteger id) {
+	public ResponseEntity<ViaAdministracaoDTO> listar(BigInteger id) {
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Via de Administração com id = " + id));
 		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao), HttpStatus.OK);
 	}
 
-	public ResponseEntity<ViaAdministracaoDTO> lista(String nome) {
+	public ResponseEntity<ViaAdministracaoDTO> listar(String nome) {
 		ViaAdministracao viaAdministracao = viaAdministracaoRepository.findByNome(nome).orElseThrow(
 				() -> new RecordNotFoundException("Não encontrado Via de Administração com nome = " + nome));
 		return new ResponseEntity<>(new ViaAdministracaoDTO(viaAdministracao), HttpStatus.OK);

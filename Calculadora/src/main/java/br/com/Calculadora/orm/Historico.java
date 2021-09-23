@@ -44,6 +44,17 @@ public class Historico {
 		this.resultadosJson = resultadosJson;
 		this.dataCalculo = dataCalculo;
 	}
+	
+	public Historico(String nomeUsuario, String nomeMedicamento, String quantidadeApresentacao,
+			String quantidadePrescrita, String viaAdministracao, String resultadosJson, Date dataCalculo) {
+		this.nomeUsuario = nomeUsuario;
+		this.nomeMedicamento = nomeMedicamento;
+		this.quantidadeApresentacao = quantidadeApresentacao;
+		this.quantidadePrescrita = quantidadePrescrita;
+		this.viaAdministracao = viaAdministracao;
+		this.resultadosJson = resultadosJson;
+		this.dataCalculo = dataCalculo;
+	}
 
 	public void setId(BigInteger id) {
 		this.id = id;

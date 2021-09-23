@@ -35,19 +35,19 @@ public class ViaAdministracaoController {
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
 	public ResponseEntity<List<ViaAdministracaoDTO>> lista() {
-		return (viaAdministracaoService.lista());
+		return (viaAdministracaoService.listar());
 	}
 	
 	@ApiOperation(value = "Retorna entidade do id")
 	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
-	public ResponseEntity<ViaAdministracaoDTO> lista(@RequestParam BigInteger id){
-		return(viaAdministracaoService.lista(id));
+	public ResponseEntity<ViaAdministracaoDTO> listar(@RequestParam BigInteger id){
+		return(viaAdministracaoService.listar(id));
 	}
 	
 	@ApiOperation(value = "Retorna entidade do nome")
 	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
-	public ResponseEntity<ViaAdministracaoDTO> lista(@RequestParam String nome){
-		return(viaAdministracaoService.lista(nome));
+	public ResponseEntity<ViaAdministracaoDTO> listar(@RequestParam String nome){
+		return(viaAdministracaoService.listar(nome));
 	}
 
 	@ApiOperation(value = "Insere nome Via Administração")

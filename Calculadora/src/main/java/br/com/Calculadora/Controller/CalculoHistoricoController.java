@@ -39,9 +39,9 @@ public class CalculoHistoricoController {
 
 	@ApiOperation(value = "Retorna lista da base") 
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public ResponseEntity<List<HistoricoDto>> lista(@RequestParam BigInteger id, @RequestParam Date dataInicio,
+	public ResponseEntity<List<HistoricoDto>> listar(@RequestParam BigInteger id, @RequestParam Date dataInicio,
 			@RequestParam Date dataFim) {
-		return (calculoHistoricoService.lista(id, dataInicio, dataFim));
+		return (calculoHistoricoService.listar(id, dataInicio, dataFim));
 	}
 
 }

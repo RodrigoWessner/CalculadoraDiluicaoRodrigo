@@ -45,10 +45,8 @@ public class CalculoHistoricoService {
 		this.viaAdministracaoRepository = viaAdministracaoRepository;
 	}
 
-	public ResponseEntity<List<HistoricoDto>> lista(BigInteger id, Date dataInicio, Date dataFim) {// localdate
+	public ResponseEntity<List<HistoricoDto>> listar(BigInteger id, Date dataInicio, Date dataFim) {// localdate
 		List<HistoricoDto> historicoDtoList = new ArrayList<HistoricoDto>();
-		// LocalDate dataInicial = LocalDate.parse(dataInicio, formatter);
-		// LocalDate dataFinal = LocalDate.parse(dataFim, formatter);
 		Medicamento medicamento = medicamentoRepository.findById(id)
 				.orElseThrow(() -> new RecordNotFoundException("Não encontrado Medicamento com id = " + id));
 		String nomeMedicamento = medicamento.getNome();
@@ -63,7 +61,7 @@ public class CalculoHistoricoService {
 		BigInteger idMedicamento = calculoForm.getIdMedicamento();
 		BigInteger idViaAdministracao = calculoForm.getIdViaAdministracao();
 		Date data = Date.valueOf(LocalDate.now());
-		String resultadoJson = "";
+		StringBuilder resultadoJson = new StringBuilder();
 		BigDecimal resultado = BigDecimal.ZERO;
 
 		Medicamento medicamento = medicamentoRepository.findById(idMedicamento)
@@ -78,13 +76,12 @@ public class CalculoHistoricoService {
 
 		List<DiluicaoConfiguracao> diluicaoConfiguracaoList = diluicaoConfiguracaoRepository
 			.findByDiluicaoConfiguracaoPKMedicamentoIdAndDiluicaoConfiguracaoPKViaAdministracaoId(idMedicamento, idViaAdministracao);
-		System.out.println("4444444");
 
 		List<String> passosAdministracao = new ArrayList<>();
 		if (!diluicaoConfiguracaoList.isEmpty()) {
-			resultadoJson.concat("\nPassos: ");
+			resultadoJson.append("\nPassos: ");
 			diluicaoConfiguracaoList.forEach(diluicao -> {
-				resultadoJson.concat("Sequencia " + diluicao.getSequencia() + ": " + diluicao.getModoPreparo() + "\n");
+				resultadoJson.append("Sequencia " + diluicao.getSequencia() + ": " + diluicao.getModoPreparo() + "\n");
 				passosAdministracao.add(diluicao.getModoPreparo());
 			});
 		}
@@ -100,9 +97,9 @@ public class CalculoHistoricoService {
 			informacoes.add(medicamento.getInfoSobra());
 		}
 
-		Historico historico = new Historico(medicamento.getId(), calculoForm.getNomeUsuario(), medicamento.getNome(),
+		Historico historico = new Historico(calculoForm.getNomeUsuario(), medicamento.getNome(),
 				String.valueOf(medicamento.getQuantidadeApresentacao()), String.valueOf(calculoForm.getPrescricao()),
-				viaAdministracao.getNome(), resultadoJson, data);
+				viaAdministracao.getNome(), String.valueOf(resultadoJson), data);
 
 		try {
 			historicoRepository.save(historico);

@@ -35,20 +35,20 @@ public class LaboratorioController {
 	
 	@ApiOperation(value = "Retorna lista da base")
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
-	public ResponseEntity<List<LaboatorioDto>> lista(){
-		return(laboratorioService.lista());
+	public ResponseEntity<List<LaboatorioDto>> listar(){
+		return(laboratorioService.listar());
 	}
 	
 	@ApiOperation(value = "Retorna entidade do id")
 	@RequestMapping(value = "/listar/{id}", method = RequestMethod.GET, params = "id")
-	public ResponseEntity<LaboatorioDto> lista(@RequestParam BigInteger id){
-		return(laboratorioService.lista(id));
+	public ResponseEntity<LaboatorioDto> listar(@RequestParam BigInteger id){
+		return(laboratorioService.listar(id));
 	}
 	
 	@ApiOperation(value = "Retorna entidade do nome")
 	@RequestMapping(value = "/listar/{nome}", method = RequestMethod.GET, params = "nome")
-	public ResponseEntity<LaboatorioDto> lista(@RequestParam String nome){
-		return(laboratorioService.lista(nome));
+	public ResponseEntity<LaboatorioDto> listar(@RequestParam String nome){
+		return(laboratorioService.listar(nome));
 	}
 	
 	@ApiOperation(value = "Insere nome Laboratorio")
